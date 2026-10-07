@@ -21,7 +21,7 @@ env = environ.Env(DEBUG=(bool, True))
 environ.Env.read_env(BASE_DIR / '.env')
 SECRET_KEY  = env('SECRET_KEY', default='dev-key-insegura-solo-para-desarrollo')
 DEBUG       = env('DEBUG', default=True)
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['.onrender.com','localhost','127.0.0.1'])
 # ── Apps instaladas ───────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'django.contrib.admin',
