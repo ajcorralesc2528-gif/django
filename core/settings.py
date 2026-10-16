@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'productos',
     'ventas',
     'reportes',
+    'configuracion',   # ← nueva app W05
 ]
 
 MIDDLEWARE = [
