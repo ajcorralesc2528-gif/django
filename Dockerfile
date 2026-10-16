@@ -31,8 +31,12 @@ RUN python manage.py collectstatic --no-input \
 # Exponer el puerto
 EXPOSE $PORT
 
-# Comando por defecto: iniciar Gunicorn
-CMD gunicorn core.wsgi \
+# Usar la configuración de producción (PostgreSQL)
+ENV DJANGO_SETTINGS_MODULE=core.settings_prod
+
+# Aplicar migraciones y luego iniciar Gunicorn
+CMD python manage.py migrate --no-input && \
+    gunicorn core.wsgi \
     --bind 0.0.0.0:$PORT \
     --workers 2 \
     --timeout 120 \
