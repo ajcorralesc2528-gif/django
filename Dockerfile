@@ -34,6 +34,7 @@ ENV DJANGO_SETTINGS_MODULE=core.settings_prod
 
 # Aplicar migraciones y luego iniciar Gunicorn
 CMD python manage.py migrate --no-input && \
+    (python manage.py createsuperuser --noinput || true) && \
     gunicorn core.wsgi \
     --bind 0.0.0.0:$PORT \
     --workers 2 \
