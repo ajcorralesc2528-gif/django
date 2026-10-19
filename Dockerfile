@@ -24,9 +24,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 COPY . .
 
 # Recolectar archivos estáticos durante el build
-RUN python manage.py collectstatic --no-input \
-    --settings=core.settings \
-    || echo "collectstatic con settings base"
+RUN python manage.py collectstatic --no-input --settings=core.settings
 
 # Exponer el puerto
 EXPOSE $PORT
