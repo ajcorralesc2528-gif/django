@@ -4,6 +4,9 @@
 Lectura: ListView y DetailView.
 Escritura (Create/Update/Delete): W08.
 """
+# Agregar PermissionRequiredMixin al import:
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+
 # clientes/views.py — agregar imports al inicio:
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -81,13 +84,14 @@ class ClienteUpdateView(LoginRequiredMixin, UpdateView):
         return response
 
 
-class ClienteDeleteView(LoginRequiredMixin, DeleteView):
-    """Confirmación y borrado de un cliente."""
-
-    model         = Cliente
-    template_name = 'clientes/eliminar.html'
-    pk_url_kwarg  = 'cliente_id'
-    success_url   = reverse_lazy('clientes:lista')
+# Actualizar ClienteDeleteView:
+class ClienteDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model               = Cliente
+    template_name       = 'clientes/eliminar.html'
+    pk_url_kwarg        = 'cliente_id'
+    success_url         = reverse_lazy('clientes:lista')
+    permission_required = 'clientes.delete_cliente'
+    raise_exception     = True
 
     def form_valid(self, form):
         nombre   = self.object.nombre
