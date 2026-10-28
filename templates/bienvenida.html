@@ -1,34 +1,403 @@
 {% extends "base.html" %}
 {% block title %}Inicio{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* ---------- ENCABEZADO (como el original) ---------- */
+    .welcome { text-align: center; padding: .5rem 0 0; }
+    .welcome h1 {
+        font-family: 'Playfair Display',serif; color: var(--clr-navy);
+        font-size: clamp(2rem, 4vw, 2.8rem); margin: 0 0 .4rem;
+    }
+    [data-theme="dark"] .welcome h1 { color: var(--clr-sky); }
+    .welcome p { color: var(--clr-muted); font-size: 1.05rem; margin: 0; }
+    .caret { display: inline-block; width: 3px; height: 1em; margin-left: 4px; vertical-align: -.12em;
+             background: var(--clr-gold); animation: blink .9s steps(1) infinite; }
+    .caret.off { display: none; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .welcome p { min-height: 1.7em; }
+    .welcome .badges { display: flex; justify-content: center; gap: .5rem; flex-wrap: wrap; margin-top: .9rem; }
+
+    /* ---------- ESCENA: CONTROL + AUDÍFONOS ---------- */
+    .scene {
+        position: relative; display: flex; align-items: flex-end; justify-content: center;
+        gap: 2.5rem; padding: 2.5rem 1rem 1rem; margin: 1.5rem 0 1rem;
+    }
+    .scene::before {                   /* aro dorado sutil detrás de los productos */
+        content: ""; position: absolute; left: 50%; bottom: 0; width: min(760px, 94%); height: 78%;
+        transform: translateX(-50%); border-radius: 50% / 60% 60% 0 0;
+        background: radial-gradient(ellipse at 50% 65%, var(--clr-cream), transparent 68%);
+        z-index: 0;
+    }
+    .scene > * { position: relative; z-index: 1; }
+    .scene-pad { flex: 1 1 56%; max-width: 440px; animation: hoverPad 5.5s ease-in-out infinite; }
+    .scene-hp  { flex: 1 1 34%; max-width: 290px; animation: hoverHp 6.5s ease-in-out infinite; }
+    @keyframes hoverPad { 0%,100% { translate: 0 0; rotate: -.6deg; } 50% { translate: 0 -14px; rotate: .8deg; } }
+    @keyframes hoverHp  { 0%,100% { translate: 0 -4px; rotate: .8deg; } 50% { translate: 0 -18px; rotate: -1deg; } }
+    .scene svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .scene-hint {
+        position: absolute; top: .5rem; left: 50%; transform: translateX(-50%); z-index: 3;
+        font-size: .82rem; color: var(--clr-muted); background: var(--clr-surface);
+        border: 1px solid var(--clr-border); border-radius: 999px;
+        padding: .25rem .9rem; min-width: 13ch; text-align: center;
+    }
+    .hp-link { display: block; cursor: pointer; outline: none; transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+    .hp-link:hover, .hp-link:focus-visible { transform: translateY(-8px) rotate(-2deg); }
+    .stk { transition: transform .15s; }
+    .stk:hover { transform: translate(var(--sx,0), var(--sy,0)); }
+
+    .face { cursor: pointer; outline: none; }
+    .face circle.cap {
+        fill: url(#pCap); stroke: #C0C9DA; stroke-width: 1.4;
+        filter: drop-shadow(0 3px 0 #AAB5CA) drop-shadow(0 5px 3px rgba(10,20,40,.25));
+        transition: fill .18s, transform .12s, filter .12s; transform-box: fill-box; transform-origin: center;
+    }
+    .face .sym { fill: none; stroke: #9AA6BC; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: stroke .18s; }
+    .face:hover circle.cap, .face:focus-visible circle.cap { transform: scale(1.18); }
+    .face:active circle.cap { transform: translateY(3px) scale(.96); filter: drop-shadow(0 0 0 #AAB5CA); }
+    .face.tri:hover circle.cap, .face.tri:focus-visible circle.cap { fill: #34C98A; }
+    .face.cir:hover circle.cap, .face.cir:focus-visible circle.cap { fill: #FF5B6B; }
+    .face.cro:hover circle.cap, .face.cro:focus-visible circle.cap { fill: #4DA3FF; }
+    .face.sqr:hover circle.cap, .face.sqr:focus-visible circle.cap { fill: #F08BD0; }
+    .face:hover .sym, .face:focus-visible .sym { stroke: #fff; }
+
+    .stage-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: .6rem; margin-bottom: 2rem; }
+    .stage-actions a { padding: .65rem 1.5rem; }
+
+    /* ---------- ACCESOS RÁPIDOS ---------- */
+    .chips { justify-content: center; }
+
+    /* ---------- MÓDULOS (centrados como el original) ---------- */
+    .section-title { display: none; }
+    .module-card {
+        position: relative; height: 100%; overflow: hidden; cursor: pointer;
+        text-align: center; padding: 1.6rem 1.2rem; margin: 0;
+        display: block; border-top: 3px solid transparent;
+        transition: transform .15s, border-color .2s, box-shadow .2s;
+    }
+    .module-card::before {
+        content: ""; position: absolute; inset: 0; opacity: 0; pointer-events: none;
+        background: radial-gradient(260px circle at var(--mx,50%) var(--my,50%), rgba(184,134,11,.14), transparent 70%);
+        transition: opacity .25s;
+    }
+    .module-card:hover { border-top-color: var(--clr-gold); transform: translateY(-3px); }
+    .module-card:hover::before { opacity: 1; }
+    .module-card:active { transform: scale(.97); }
+    .module-icon { font-size: 2.1rem; margin-bottom: .4rem; transition: transform .2s; display: inline-block; }
+    .module-card:hover .module-icon { transform: scale(1.15) rotate(-6deg); }
+    .module-card strong { display: block; font-family: 'Playfair Display',serif; font-size: 1.08rem; color: var(--clr-navy); }
+    [data-theme="dark"] .module-card strong { color: var(--clr-sky); }
+    .module-card p { color: var(--clr-muted); font-size: .85rem; margin: .3rem 0 0; }
+    .module-go { display: none; }
+    .stack-line { display: none; }
+    .chips { display: flex; flex-wrap: wrap; gap: .6rem; margin: 0 0 2rem; }
+    .chip {
+        display: inline-flex; align-items: center; gap: .55rem;
+        padding: .6rem 1.2rem; border-radius: 14px; text-decoration: none; margin-bottom: 5px;
+        background: linear-gradient(180deg, var(--clr-surface), var(--clr-ice)); color: var(--clr-text);
+        font-weight: 700; font-size: .9rem; border: 2px solid var(--clr-border);
+        box-shadow: 0 5px 0 color-mix(in srgb, var(--clr-border), #000 22%), 0 10px 14px -6px rgba(10,35,66,.25), inset 0 1px 0 #fff;
+        transition: transform .12s, box-shadow .12s, border-color .2s;
+    }
+    .chip span.e { font-size: 1.2rem; }
+    .chip:hover { border-color: var(--clr-gold); color: var(--clr-text); transform: translateY(-2px);
+        box-shadow: 0 7px 0 color-mix(in srgb, var(--clr-gold), #000 40%), 0 14px 18px -6px rgba(10,35,66,.3), inset 0 1px 0 #fff; }
+    .chip:active { transform: translateY(4px);
+        box-shadow: 0 1px 0 color-mix(in srgb, var(--clr-gold), #000 40%), inset 0 2px 4px rgba(0,0,0,.18); }
+
+
+    /* ---------- HALLOWEEN: fantasmas y calabazas ---------- */
+    .hw-ghost { position: absolute; z-index: 2; cursor: pointer; filter: drop-shadow(0 6px 10px rgba(80,50,140,.35)) drop-shadow(0 0 14px rgba(255,255,255,.25));
+                animation: floaty 5s ease-in-out infinite; transition: transform .25s; }
+    .hw-ghost svg { width: 100%; height: auto; display: block; }
+    .hw-ghost:hover { transform: scale(1.18) rotate(-6deg); }
+    .hw-ghost.g1 { width: 82px; left: 1%; top: 18%; animation-delay: 0s; }
+    .hw-ghost.g2 { width: 60px; right: 2%; top: 6%; animation-delay: -1.8s; opacity: .92; }
+    .hw-ghost.g3 { width: 44px; left: 24%; top: -2%; animation-delay: -3.2s; opacity: .8; }
+    @keyframes floaty { 0%,100% { translate: 0 0; } 50% { translate: 0 -16px; } }
+
+    .hw-pumpkin { position: absolute; z-index: 2; bottom: -6px; cursor: pointer;
+                  filter: drop-shadow(0 0 10px rgba(255,138,31,.55)) drop-shadow(0 6px 4px rgba(0,0,0,.3));
+                  animation: flicker 3.4s ease-in-out infinite; transition: transform .2s; }
+    .hw-pumpkin svg { width: 100%; height: auto; display: block; }
+    .hw-pumpkin:hover { transform: scale(1.12) rotate(4deg); }
+    .hw-pumpkin:active { transform: scale(.94) translateY(3px); }
+    .hw-pumpkin.p1 { width: 104px; left: -2%; }
+    .hw-pumpkin.p2 { width: 84px; right: -1%; animation-delay: -1.5s; }
+    .hw-pumpkin.p3 { width: 54px; left: 33%; bottom: -8px; animation-delay: -2.4s; }
+    @keyframes flicker {
+        0%,100% { filter: drop-shadow(0 0 10px rgba(255,138,31,.55)) drop-shadow(0 6px 4px rgba(0,0,0,.3)); }
+        45%     { filter: drop-shadow(0 0 20px rgba(255,170,60,.9)) drop-shadow(0 6px 4px rgba(0,0,0,.3)); }
+        60%     { filter: drop-shadow(0 0 7px rgba(255,138,31,.4)) drop-shadow(0 6px 4px rgba(0,0,0,.3)); }
+    }
+    .boo { position: absolute; z-index: 4; padding: .15rem .6rem; border-radius: 999px; font-weight: 700; font-size: .8rem;
+           background: var(--clr-gold); color: #fff; pointer-events: none; animation: boo 1s ease-out forwards; }
+    @keyframes boo { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-34px); } }
+
+    /* luces del control y audífonos en naranja */
+    .halloween svg [stroke="#4D8DFF"] { stroke: #FF8A1F; }
+    [data-theme="dark"] .welcome h1 { text-shadow: 0 0 22px rgba(255,138,31,.35); }
+
+    @media (max-width: 700px) {
+        .scene { flex-direction: column; align-items: center; gap: 1rem; }
+        .scene-pad, .scene-hp { max-width: 320px; width: 100%; }
+        .scene-hp { max-width: 220px; }
+        .hw-pumpkin.p3, .hw-ghost.g3 { display: none; }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="text-center py-4">
-    <h1 style="font-family:'Playfair Display',serif;
-               color:var(--clr-navy);font-size:2.2rem;">
-        📦 ERP Django
-    </h1>
-    <p style="color:var(--clr-muted);font-size:1.05rem;">
-        Sistema de gestión empresarial · UTEC Celaya · Espiral 1 W02
-    </p>
-    <div class="d-flex justify-content-center gap-2 mt-2 flex-wrap">
+
+<!-- ENCABEZADO -->
+<div class="welcome">
+    <h1>🎮 <span id="twTitle">Press Start</span><i class="caret" id="caretTitle"></i></h1>
+    <p><span id="twSub">Sistema de gestión empresarial · Espiral 1 W02</span><i class="caret off" id="caretSub"></i></p>
+    <div class="badges">
         <span class="badge-erp-gold">Django 4.2 LTS</span>
         <span class="badge-erp-gold">Python 3.11</span>
         <span class="badge-erp-gold">Fable 5 AzulERP</span>
     </div>
 </div>
 
-<div class="row g-3 mt-2">
+<!-- CONTROL + AUDÍFONOS -->
+<div class="scene">
+    <span class="scene-hint" id="padHint">Pulsa un botón</span>
+    <!-- Halloween -->
+    <div class="hw-ghost g1" title="¡Buuu!"><svg viewBox="0 0 100 124"><use href="#hw-ghost"/></svg></div>
+    <div class="hw-ghost g2" title="¡Buuu!"><svg viewBox="0 0 100 124"><use href="#hw-ghost"/></svg></div>
+    <div class="hw-ghost g3" title="¡Buuu!"><svg viewBox="0 0 100 124"><use href="#hw-ghost"/></svg></div>
+    <div class="hw-pumpkin p1"><svg viewBox="0 0 120 112"><use href="#hw-pumpkin"/></svg></div>
+    <div class="hw-pumpkin p2"><svg viewBox="0 0 120 112"><use href="#hw-pumpkin"/></svg></div>
+    <div class="hw-pumpkin p3"><svg viewBox="0 0 120 112"><use href="#hw-pumpkin"/></svg></div>
+    <div class="scene-pad">
+        <svg viewBox="0 0 480 310" role="group" aria-label="Control DualSense">
+  <defs>
+    <radialGradient id="pCap" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCE3EF"/></radialGradient>
+    <linearGradient id="pBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E8EDF5"/>
+    </linearGradient>
+    <linearGradient id="pBlack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1A2030"/>
+      <stop offset="1" stop-color="#0A0D14"/>
+    </linearGradient>
+    <radialGradient id="pStick" cx=".4" cy=".35" r=".7">
+      <stop offset="0" stop-color="#3A4358"/>
+      <stop offset="1" stop-color="#0A0D14"/>
+    </radialGradient>
+    <filter id="pglow" x="-100%" y="-20%" width="300%" height="140%">
+      <feGaussianBlur stdDeviation="2.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="psoft"><feGaussianBlur stdDeviation="7"/></filter>
+  </defs>
+
+  <ellipse cx="240" cy="290" rx="200" ry="11" fill="#0B1424" opacity=".28" filter="url(#psoft)"/>
+
+  <!-- cuerpo blanco -->
+  <path d="M240 34 L330 34 C356 34 376 42 392 58 C420 86 446 140 458 196
+           C466 236 466 262 450 276 C434 290 412 284 398 262 C384 240 372 214 350 200
+           C336 192 326 190 312 190 L168 190 C154 190 144 192 130 200
+           C108 214 96 240 82 262 C68 284 46 290 30 276 C14 262 14 236 22 196
+           C34 140 60 86 88 58 C104 42 124 34 150 34 Z"
+        fill="url(#pBody)" stroke="#CBD5E4" stroke-width="2"/>
+  <!-- línea de hombros (L1/R1) -->
+  <path d="M96 62 C116 46 140 40 170 40 M384 62 C364 46 340 40 310 40" stroke="#D3DBE8" stroke-width="1.6" fill="none"/>
+
+  <!-- placa negra central -->
+  <path d="M176 42 C200 36 280 36 304 42 C310 96 322 150 336 196 C326 194 322 190 312 190 L168 190 C158 190 154 194 144 196 C158 150 170 96 176 42 Z" fill="url(#pBlack)"/>
+
+  <!-- touchpad inscrito en la placa -->
+  <path d="M200 48 C224 44 256 44 280 48 C284 68 284 90 280 108 C256 112 224 112 200 108 C196 90 196 68 200 48 Z" fill="#F6F8FC" stroke="#DCE3EF" stroke-width="1"/>
+  <!-- barras de luz -->
+  <path d="M190 52 C186 72 187 92 192 112 M290 52 C294 72 293 92 288 112"
+        stroke="#4D8DFF" stroke-width="4" stroke-linecap="round" fill="none" filter="url(#pglow)"/>
+
+  <!-- botones Create / Options -->
+  <rect x="149" y="66" width="10" height="20" rx="5" fill="#EEF2F8" stroke="#CBD5E4" transform="rotate(-8 154 76)"/>
+  <rect x="321" y="66" width="10" height="20" rx="5" fill="#EEF2F8" stroke="#CBD5E4" transform="rotate(8 326 76)"/>
+
+  <!-- botón PS + micrófono -->
+  <circle cx="240" cy="132" r="8" fill="#F1F4FA"/>
+  <path d="M236 127 L236 133 M240 125.5 L240 134 M244 128 L244 133" stroke="#9AA6BC" stroke-width="1.6" stroke-linecap="round"/>
+  <rect x="226" y="150" width="28" height="3" rx="1.5" fill="#2A3246"/>
+
+  <!-- cruceta -->
+  <g fill="#F7F9FC" stroke="#C6CFDF" stroke-width="1.3">
+    <path d="M110 98 h16 a3 3 0 0 1 3 3 v14 h14 a3 3 0 0 1 3 3 v16 a3 3 0 0 1 -3 3 h-14 v14 a3 3 0 0 1 -3 3 h-16 a3 3 0 0 1 -3 -3 v-14 h-14 a3 3 0 0 1 -3 -3 v-16 a3 3 0 0 1 3 -3 h14 v-14 a3 3 0 0 1 3 -3 z" transform="translate(-2 -6) scale(.94)"/>
+  </g>
+  <g fill="#9AA6BC">
+    <path d="M118 108 l4 -6 l4 6 z M118 142 l4 6 l4 -6 z M92 122 l-6 4 l6 4 z M152 122 l6 4 l-6 4 z" transform="translate(0 -2)" opacity=".0"/>
+  </g>
+
+  <!-- joysticks -->
+  <g class="stk" style="--sx:-3px;--sy:2px">
+    <circle cx="196" cy="158" r="25" fill="#222A3C"/>
+    <circle cx="196" cy="158" r="18" fill="url(#pStick)"/>
+    <circle cx="196" cy="158" r="12" fill="none" stroke="#2F384D" stroke-width="2" stroke-dasharray="2 3"/>
+    <circle cx="284" cy="158" r="25" fill="#222A3C"/>
+    <circle cx="284" cy="158" r="18" fill="url(#pStick)"/>
+    <circle cx="284" cy="158" r="12" fill="none" stroke="#2F384D" stroke-width="2" stroke-dasharray="2 3"/>
+  </g>
+<!-- botones frontales (enlaces) -->
+  <a class="face tri" href="{% url 'reportes:inicio' %}" data-label="Reportes"><circle class="cap" cx="372" cy="96" r="14"/><path class="sym" d="M372 88 L379 101 L365 101 Z"/></a>
+  <a class="face cir" href="{% url 'clientes:lista' %}" data-label="Clientes"><circle class="cap" cx="398" cy="122" r="14"/><circle class="sym" cx="398" cy="122" r="7"/></a>
+  <a class="face cro" href="{% url 'ventas:lista' %}" data-label="Ventas"><circle class="cap" cx="372" cy="148" r="14"/><path class="sym" d="M366 142 L378 154 M378 142 L366 154"/></a>
+  <a class="face sqr" href="{% url 'productos:lista' %}" data-label="Productos"><circle class="cap" cx="346" cy="122" r="14"/><rect class="sym" x="340" y="116" width="12" height="12" rx="1"/></a>
+</svg>
+    </div>
+    <a class="scene-hp hp-link" href="{% url 'productos:lista' %}?q=Audifonos" aria-label="Ver audífonos">
+        <svg viewBox="0 0 320 320" role="img" aria-label="Audífonos">
+  <defs>
+    <linearGradient id="hCup" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#E6ECF5"/><stop offset=".45" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E1E8F2"/>
+    </linearGradient>
+    <linearGradient id="hCupR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#E1E8F2"/><stop offset=".55" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E6ECF5"/>
+    </linearGradient>
+    <radialGradient id="hPad" cx=".5" cy=".4" r=".7">
+      <stop offset="0" stop-color="#2A3246"/><stop offset="1" stop-color="#0A0D14"/>
+    </radialGradient>
+    <filter id="hglow" x="-100%" y="-20%" width="300%" height="140%">
+      <feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="hsoft"><feGaussianBlur stdDeviation="7"/></filter>
+  </defs>
+
+  <ellipse cx="160" cy="300" rx="120" ry="9" fill="#0B1424" opacity=".28" filter="url(#hsoft)"/>
+
+  <!-- diadema -->
+  <path d="M62 168 C62 22 258 22 258 168" fill="none" stroke="#C6CFDF" stroke-width="24" stroke-linecap="round"/>
+  <path d="M62 168 C62 22 258 22 258 168" fill="none" stroke="#FFFFFF" stroke-width="21" stroke-linecap="round"/>
+  <path d="M74 168 C74 40 246 40 246 168" fill="none" stroke="#10141E" stroke-width="9" stroke-linecap="round"/>
+
+  <!-- horquillas -->
+  <rect x="48" y="160" width="26" height="34" rx="9" fill="#10141E"/>
+  <rect x="246" y="160" width="26" height="34" rx="9" fill="#10141E"/>
+
+  <!-- copa izquierda -->
+  <g>
+    <rect x="22" y="176" width="78" height="112" rx="36" fill="url(#hCup)" stroke="#C6CFDF" stroke-width="1.6"/>
+    <rect x="86" y="190" width="22" height="84" rx="11" fill="url(#hPad)"/>
+    <path d="M40 196 C34 220 34 246 40 268" stroke="#4D8DFF" stroke-width="4" stroke-linecap="round" fill="none" filter="url(#hglow)"/>
+    <circle cx="66" cy="282" r="2.2" fill="#9AA6BC"/>
+  </g>
+  <!-- copa derecha -->
+  <g>
+    <rect x="220" y="176" width="78" height="112" rx="36" fill="url(#hCupR)" stroke="#C6CFDF" stroke-width="1.6"/>
+    <rect x="212" y="190" width="22" height="84" rx="11" fill="url(#hPad)"/>
+    <path d="M280 196 C286 220 286 246 280 268" stroke="#4D8DFF" stroke-width="4" stroke-linecap="round" fill="none" filter="url(#hglow)"/>
+    <circle cx="254" cy="282" r="2.2" fill="#9AA6BC"/>
+  </g>
+</svg>
+    </a>
+</div>
+
+<div class="stage-actions">
+    <a href="{% url 'ventas:lista' %}" class="btn-erp-primary">Nueva venta</a>
+    <a href="{% url 'productos:lista' %}" class="btn-erp-ghost">Ver inventario</a>
+</div>
+
+<!-- ACCESOS RÁPIDOS -->
+<div class="chips" style="justify-content:center">
+    <a class="chip" href="{% url 'productos:lista' %}?q=PS5"><span class="e">🎮</span> Consolas PS5</a>
+    <a class="chip" href="{% url 'productos:lista' %}?q=Audifonos"><span class="e">🎧</span> Audífonos</a>
+    <a class="chip" href="{% url 'productos:lista' %}?q=Control"><span class="e">🕹️</span> Controles</a>
+</div>
+
+<!-- MÓDULOS -->
+<div class="row g-3">
     {% for m in modulos %}
     <div class="col-md-4">
-        <div class="erp-card text-center"
-             style="cursor:pointer;" onclick="window.location='{{ m.url }}'">
-            <div style="font-size:2rem;margin-bottom:.4rem;">{{ m.icono }}</div>
-            <strong style="color:var(--clr-navy);">{{ m.nombre }}</strong>
-            <p style="color:var(--clr-muted);font-size:.85rem;margin:.3rem 0 0;">
-                {{ m.descripcion }}
-            </p>
+        <div class="erp-card module-card" tabindex="0" role="link"
+             onclick="window.location='{{ m.url }}'"
+             onkeydown="if(event.key==='Enter'){window.location='{{ m.url }}'}">
+            <div class="module-icon">{{ m.icono }}</div>
+            <strong>{{ m.nombre }}</strong>
+            <p>{{ m.descripcion }}</p>
         </div>
     </div>
     {% endfor %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var hint = document.getElementById('padHint');
+    var def  = 'Pulsa un botón';
+    function bind(el, label) {
+        var show = function () { hint.textContent = label; };
+        var hide = function () { hint.textContent = def; };
+        el.addEventListener('mouseenter', show); el.addEventListener('focus', show);
+        el.addEventListener('mouseleave', hide); el.addEventListener('blur', hide);
+    }
+    document.querySelectorAll('.face').forEach(function (f) { bind(f, f.dataset.label); });
+    var hp = document.querySelector('.hp-link');
+    if (hp) bind(hp, 'Audífonos');
+
+
+    // ¡Buuu! al tocar un fantasma o calabaza
+    document.querySelectorAll('.hw-ghost, .hw-pumpkin').forEach(function (el) {
+        el.addEventListener('click', function () {
+            var b = document.createElement('span');
+            b.className = 'boo';
+            b.textContent = el.classList.contains('hw-ghost') ? '¡Buuu!' : '¡Truco o trato!';
+            b.style.left = el.offsetLeft + 'px';
+            b.style.top = (el.offsetTop - 10) + 'px';
+            el.parentNode.appendChild(b);
+            setTimeout(function () { b.remove(); }, 1000);
+        });
+    });
+
+    document.querySelectorAll('.module-card').forEach(function (c) {
+        c.addEventListener('pointermove', function (e) {
+            var r = c.getBoundingClientRect();
+            c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+            c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        });
+    });
+
+    // Escritura animada del encabezado (máquina de escribir)
+    (function () {
+        var tT = document.getElementById('twTitle'), tS = document.getElementById('twSub');
+        var cT = document.getElementById('caretTitle'), cS = document.getElementById('caretSub');
+        if (!tT || !tS || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var title = Array.from(tT.textContent);
+        var phrases = [
+            'Sistema de gestión empresarial · Espiral 1 W02',
+            'Consolas PS5, audífonos y controles',
+            'Inventario, ventas y reportes en un solo lugar',
+            'Truco o trato: todo bajo control 🎃'
+        ].map(function (p) { return Array.from(p); });
+        tT.textContent = ''; tS.textContent = '';
+        function type(el, chars, speed, done) {
+            var i = 0;
+            (function step() {
+                el.textContent = chars.slice(0, ++i).join('');
+                if (i < chars.length) setTimeout(step, speed); else if (done) done();
+            })();
+        }
+        function erase(el, chars, speed, done) {
+            var i = chars.length;
+            (function step() {
+                el.textContent = chars.slice(0, --i).join('');
+                if (i > 0) setTimeout(step, speed); else if (done) done();
+            })();
+        }
+        var n = 0;
+        function loop() {
+            var ph = phrases[n % phrases.length]; n++;
+            type(tS, ph, 38, function () {
+                setTimeout(function () { erase(tS, ph, 18, function () { setTimeout(loop, 350); }); }, 2600);
+            });
+        }
+        type(tT, title, 110, function () {
+            cT.classList.add('off'); cS.classList.remove('off');
+            setTimeout(loop, 300);
+        });
+    })();
+})();
+</script>
 {% endblock %}

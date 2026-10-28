@@ -1,639 +1,485 @@
 <!DOCTYPE html>
-
 <html lang="es" data-theme="light">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <meta name="theme-color" content="#0A2342">
+    <title>{% block title %}Press Start{% endblock %}</title>
 
-    <title>{% block title %}ERP Django{% endblock %} · UTEC Celaya</title>
-
-    <!-- Google Fonts: Playfair Display + Inter + JetBrains Mono -->
-
+    <!-- Fuentes: Sora (títulos) + Inter (texto) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-
           rel="stylesheet">
 
     <!-- Bootstrap 5 -->
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-
           rel="stylesheet">
 
-    <!-- Fable 5 AzulERP — Design System -->
-
     <style>
-
-        /* TOKENS MODO DÍA */
-
-        :root, [data-theme="light"] {
-
+        /* ============ TOKENS ============
+           Se conservan los nombres --clr-* para que el resto de tus
+           plantillas (productos, clientes, ventas...) cambien solas. */
+                :root, [data-theme="light"] {
             --clr-navy   : #0A2342;
-
             --clr-royal  : #1B4F8A;
-
             --clr-sky    : #4A90D9;
-
             --clr-ice    : #E8F0FB;
-
             --clr-gold   : #B8860B;
-
             --clr-amber  : #D4A017;
-
             --clr-cream  : #FDF8E8;
-
             --clr-bg     : #F5F7FA;
-
             --clr-surface: #FFFFFF;
-
             --clr-text   : #1A1A2E;
-
             --clr-muted  : #5A6A7E;
-
             --clr-border : #C8D8EC;
-
             --clr-danger : #C0392B;
-
             --clr-ok     : #1A7A4A;
-
+            --glass      : rgba(10,35,66,.94);
             --shadow-sm  : 0 1px 4px rgba(10,35,66,.08);
-
-            --shadow-md  : 0 4px 16px rgba(10,35,66,.12);
-
+            --shadow-md  : 0 8px 24px rgba(10,35,66,.14);
+            --glow       : 0 0 0 4px rgba(184,134,11,.22);
+            --radius     : 14px;
         }
-
-        /* TOKENS MODO NOCHE */
-
-        [data-theme="dark"] {
-
+                [data-theme="dark"] {
             --clr-navy   : #1E3A5F;
-
             --clr-royal  : #2E5F9E;
-
             --clr-sky    : #6BAEE8;
-
             --clr-ice    : #1A2A3A;
-
             --clr-gold   : #D4AF37;
-
             --clr-amber  : #E8C547;
-
             --clr-cream  : #2A2510;
-
             --clr-bg     : #0D1B2A;
-
             --clr-surface: #142033;
-
             --clr-text   : #E2EAF4;
-
             --clr-muted  : #8AA0B8;
-
             --clr-border : #2A3F58;
-
             --clr-danger : #E74C3C;
-
             --clr-ok     : #2ECC71;
-
+            --glass      : rgba(14,28,46,.94);
             --shadow-sm  : 0 1px 4px rgba(0,0,0,.3);
-
-            --shadow-md  : 0 4px 16px rgba(0,0,0,.4);
-
+            --shadow-md  : 0 8px 24px rgba(0,0,0,.45);
+            --glow       : 0 0 0 4px rgba(212,175,55,.25);
         }
 
-        /* BASE */
-
+        /* ============ BASE ============ */
         *, *::before, *::after { box-sizing: border-box; }
-
+        html { scroll-behavior: smooth; }
         body {
-
             font-family: 'Inter','Segoe UI',sans-serif;
-
-            font-size: 15px;
-
-            background: var(--clr-bg);
-
-            color: var(--clr-text);
-
-            line-height: 1.6;
-
+            font-size: 15px; line-height: 1.6; margin: 0;
+            background: var(--clr-bg); color: var(--clr-text);
             transition: background .25s, color .25s;
-
-            margin: 0;
-
         }
+        h1,h2,h3,h4 { font-family: 'Playfair Display',Georgia,serif; }
+        :focus-visible { outline: 3px solid var(--clr-sky); outline-offset: 2px; }
 
-        /* NAVBAR */
-
+        /* ============ NAVBAR ============ */
         .erp-navbar {
-
-            background: var(--clr-navy);
-
+            position: sticky; top: 0; z-index: 50;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 1rem; padding: .7rem 1.5rem;
+            background: var(--glass);
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
             border-bottom: 3px solid var(--clr-gold);
-
-            padding: .65rem 1.5rem;
-
-            display: flex; align-items: center;
-
-            justify-content: space-between; flex-wrap: wrap; gap: .5rem;
-
             box-shadow: var(--shadow-md);
-
         }
-
         .erp-brand {
-
-            font-family: 'Playfair Display',Georgia,serif;
-
-            font-size: 1.3rem; font-weight: 700;
-
-            color: var(--clr-gold) !important;
-
-            text-decoration: none; letter-spacing: .04em;
-
+            display: inline-flex; align-items: center; gap: .6rem;
+            font-family: 'Playfair Display',Georgia,serif; font-weight: 700; font-size: 1.25rem; letter-spacing: .03em;
+            color: var(--clr-gold) !important; text-decoration: none; white-space: nowrap;
         }
+        .erp-brand .mark {
+            display: grid; place-items: center; width: 34px; height: 34px;
+            border-radius: 10px; background: rgba(255,255,255,.08);
+            border: 1px solid var(--clr-gold); font-size: 1rem; transition: transform .25s;
+        }
+        .erp-brand:hover .mark { transform: rotate(-8deg) scale(1.06); }
+        .erp-brand small { color: rgba(255,255,255,.7); font-weight: 300; font-size: .72em; }
 
-        .erp-brand span { color: rgba(255,255,255,.7); font-weight: 300; font-size: .85em; }
-
-        .erp-nav-links { display: flex; align-items: center; gap: .25rem; flex-wrap: wrap; }
-
+        .erp-nav-links {
+            display: flex; align-items: center; gap: .2rem;
+            overflow-x: auto; scrollbar-width: none;
+        }
+        .erp-nav-links::-webkit-scrollbar { display: none; }
         .erp-nav-link {
-
-            color: rgba(255,255,255,.82) !important;
-
-            font-size: .88rem; font-weight: 500;
-
-            padding: .35rem .75rem; border-radius: 6px;
-
-            text-decoration: none;
-
-            transition: background .2s, color .2s;
-
+            color: rgba(255,255,255,.82) !important; font-size: .88rem; font-weight: 500;
+            padding: .4rem .85rem; border-radius: 999px; text-decoration: none;
+            white-space: nowrap; transition: background .18s, color .18s, transform .12s;
         }
-
-        .erp-nav-link:hover, .erp-nav-link.active {
-
-            background: var(--clr-royal); color: #FFF !important;
-
-        }
+        .erp-nav-link:hover { background: var(--clr-royal); color: #fff !important; }
+        .erp-nav-link:active { transform: scale(.95); }
+        .erp-nav-link.active { background: var(--clr-royal); color: #fff !important; box-shadow: inset 0 -2px 0 var(--clr-gold); }
 
         .theme-toggle {
-
-            background: var(--clr-gold); color: var(--clr-navy);
-
-            border: none; border-radius: 50%;
-
-            width: 32px; height: 32px; font-size: .9rem;
-
-            cursor: pointer; transition: transform .2s;
-
+            flex: none; width: 38px; height: 38px; margin-left: .35rem;
+            border: 2px solid rgba(255,255,255,.35); border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, var(--clr-amber), var(--clr-gold));
+            color: var(--clr-navy); font-size: .95rem; cursor: pointer;
+            box-shadow: 0 4px 0 color-mix(in srgb, var(--clr-gold), #000 55%), inset 0 1px 0 rgba(255,255,255,.5);
+            transition: transform .12s, box-shadow .12s;
         }
+        .theme-toggle:hover { transform: translateY(-1px) rotate(20deg); }
+        .theme-toggle:active { transform: translateY(3px); box-shadow: 0 1px 0 color-mix(in srgb, var(--clr-gold), #000 55%); }
 
-        .theme-toggle:hover { transform: rotate(20deg); }
+        /* ============ CONTENIDO ============ */
+        .erp-main { padding: 2.5rem 0; min-height: calc(100vh - 120px); }
 
-        /* CONTENIDO */
-
-        .erp-main { padding: 2rem 0; min-height: calc(100vh - 110px); }
-
-        /* CARDS */
-
+        /* ============ CARDS ============ */
         .erp-card {
-
-            background: var(--clr-surface);
-
-            border: 1px solid var(--clr-border);
-
-            border-radius: 12px; box-shadow: var(--shadow-sm);
-
+            background: var(--clr-surface); border: 1px solid var(--clr-border);
+            border-radius: var(--radius); box-shadow: var(--shadow-sm);
             padding: 1.5rem; margin-bottom: 1.5rem;
-
-            transition: box-shadow .2s;
-
+            transition: box-shadow .2s, border-color .2s;
         }
-
         .erp-card:hover { box-shadow: var(--shadow-md); }
-
         .erp-card-header {
-
-            background: var(--clr-navy); color: #FFF;
-
-            border-radius: 10px 10px 0 0;
-
-            padding: .85rem 1.25rem;
-
-            border-left: 5px solid var(--clr-gold);
-
-            font-family: 'Playfair Display',serif;
-
-            font-size: 1.05rem; letter-spacing: .03em;
-
-            margin: -1.5rem -1.5rem 1.5rem;
-
+            background: var(--clr-navy); color: #fff;
+            border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+            padding: .85rem 1.25rem; font-family: 'Playfair Display',Georgia,serif;
+            font-size: 1rem; margin: -1.5rem -1.5rem 1.5rem;
+            border-bottom: 3px solid var(--clr-gold);
         }
 
-        /* TABLAS */
-
+        /* ============ TABLAS ============ */
         .erp-table {
-
             width: 100%; border-collapse: separate; border-spacing: 0;
-
-            border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-sm);
-
+            border: 1px solid var(--clr-border); border-radius: 12px;
+            overflow: hidden; box-shadow: var(--shadow-sm);
         }
-
         .erp-table thead th {
-
-            background: var(--clr-navy); color: #FFF;
-
-            font-weight: 600; font-size: .82rem;
-
-            text-transform: uppercase; letter-spacing: .06em;
-
-            padding: .75rem 1rem; border-bottom: 3px solid var(--clr-gold);
-
+            background: var(--clr-navy); color: #fff; font-weight: 600;
+            font-size: .8rem; padding: .75rem 1rem;
+            border-bottom: 3px solid var(--clr-gold);
         }
-
         .erp-table tbody td {
-
-            background: var(--clr-surface); padding: .65rem 1rem;
-
+            background: var(--clr-surface); padding: .7rem 1rem;
             border-bottom: 1px solid var(--clr-border); font-size: .9rem;
-
         }
-
         .erp-table tbody tr:nth-child(even) td { background: var(--clr-ice); }
-
-        .erp-table tbody tr:hover td { background: rgba(74,144,217,.08); }
-
+        .erp-table tbody tr:hover td { background: var(--clr-cream); }
         .erp-table tfoot td {
-
             background: var(--clr-cream); color: var(--clr-gold);
-
             font-weight: 700; border-top: 2px solid var(--clr-gold);
-
         }
 
-        /* BOTONES */
-
+        /* ============ BOTONES 3D (relieve + pulsación) ============ */
+        .btn-erp-primary, .btn-erp-gold, .btn-erp-danger, .btn-erp-ghost {
+            --top: var(--clr-navy); --bot: var(--clr-navy); --edge: #000; --ink: #fff; --rim: var(--clr-gold);
+            position: relative; overflow: hidden; display: inline-flex;
+            align-items: center; justify-content: center; gap: .4rem;
+            border-radius: 14px; padding: .55rem 1.35rem; margin-bottom: 6px;
+            font-weight: 700; font-size: .88rem; cursor: pointer; text-decoration: none;
+            color: var(--ink); border: 2px solid var(--rim);
+            background: linear-gradient(180deg, var(--top) 0%, var(--bot) 100%);
+            box-shadow:
+                0 6px 0 var(--edge),
+                0 12px 18px -4px rgba(10,35,66,.35),
+                inset 0 1px 0 rgba(255,255,255,.35),
+                inset 0 -2px 0 rgba(0,0,0,.15);
+            text-shadow: 0 1px 0 rgba(0,0,0,.25);
+            transform: translateY(0);
+            transition: transform .12s ease, box-shadow .12s ease, filter .2s;
+        }
+        .btn-erp-primary::before, .btn-erp-gold::before, .btn-erp-danger::before, .btn-erp-ghost::before {
+            content: ""; position: absolute; inset: 0 0 52% 0; pointer-events: none;
+            background: linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0));
+            border-radius: 12px 12px 0 0;
+        }
+        .btn-erp-primary:hover, .btn-erp-gold:hover, .btn-erp-danger:hover, .btn-erp-ghost:hover {
+            transform: translateY(-2px); filter: brightness(1.06);
+            box-shadow: 0 8px 0 var(--edge), 0 16px 22px -4px rgba(10,35,66,.4),
+                        inset 0 1px 0 rgba(255,255,255,.4), inset 0 -2px 0 rgba(0,0,0,.15);
+        }
+        .btn-erp-primary:active, .btn-erp-gold:active, .btn-erp-danger:active, .btn-erp-ghost:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 var(--edge), 0 3px 6px -2px rgba(10,35,66,.35),
+                        inset 0 2px 4px rgba(0,0,0,.25);
+        }
         .btn-erp-primary {
-
-            background: var(--clr-navy); color: #FFF;
-
-            border: 2px solid var(--clr-gold); border-radius: 8px;
-
-            padding: .45rem 1.2rem; font-weight: 600; font-size: .88rem;
-
-            cursor: pointer; text-decoration: none; display: inline-block;
-
-            transition: background .2s, color .2s;
-
+            --top: color-mix(in srgb, var(--clr-navy), #fff 22%); --bot: var(--clr-navy);
+            --edge: color-mix(in srgb, var(--clr-navy), #000 60%); --ink: #fff; --rim: var(--clr-gold);
         }
-
-        .btn-erp-primary:hover { background: var(--clr-gold); color: var(--clr-navy); }
-
         .btn-erp-gold {
-
-            background: var(--clr-gold); color: var(--clr-navy);
-
-            border: 2px solid var(--clr-navy); border-radius: 8px;
-
-            padding: .45rem 1.2rem; font-weight: 700;
-
-            cursor: pointer; text-decoration: none; display: inline-block;
-
-            transition: background .2s;
-
+            --top: var(--clr-amber); --bot: var(--clr-gold);
+            --edge: color-mix(in srgb, var(--clr-gold), #000 52%); --ink: var(--clr-navy); --rim: var(--clr-navy);
+            text-shadow: 0 1px 0 rgba(255,255,255,.35);
         }
-
-        .btn-erp-gold:hover { background: var(--clr-amber); }
-
         .btn-erp-danger {
-
-            background: var(--clr-danger); color: #FFF; border: none;
-
-            border-radius: 8px; padding: .4rem 1rem;
-
-            font-weight: 600; font-size: .85rem;
-
-            cursor: pointer; text-decoration: none; display: inline-block;
-
+            --top: color-mix(in srgb, var(--clr-danger), #fff 22%); --bot: var(--clr-danger);
+            --edge: color-mix(in srgb, var(--clr-danger), #000 55%); --ink: #fff;
+            --rim: color-mix(in srgb, var(--clr-danger), #000 25%);
         }
+        .btn-erp-ghost {
+            --top: var(--clr-surface); --bot: var(--clr-ice);
+            --edge: color-mix(in srgb, var(--clr-border), #000 22%); --ink: var(--clr-text); --rim: var(--clr-border);
+            text-shadow: none; box-shadow: 0 6px 0 var(--edge), 0 12px 18px -6px rgba(10,35,66,.2),
+                        inset 0 1px 0 #fff, inset 0 -2px 0 rgba(0,0,0,.05);
+        }
+        .btn-erp-sm { padding: .3rem .9rem; font-size: .8rem; border-radius: 11px; margin-bottom: 4px; }
+        .ripple {
+            position: absolute; border-radius: 50%; pointer-events: none;
+            background: rgba(255,255,255,.45); transform: scale(0);
+            animation: ripple .55s ease-out;
+        }
+        @keyframes ripple { to { transform: scale(4); opacity: 0; } }
 
-        .btn-erp-sm { padding: .25rem .7rem; font-size: .8rem; }
-
-        /* FORMULARIOS */
-
+        /* ============ FORMULARIOS ============ */
         .erp-label {
-
-            font-size: .83rem; font-weight: 600; color: var(--clr-muted);
-
-            text-transform: uppercase; letter-spacing: .05em;
-
             display: block; margin-bottom: .3rem;
-
+            font-size: .82rem; font-weight: 600; color: var(--clr-muted);
         }
-
         .erp-input {
-
-            background: var(--clr-surface); border: 1.5px solid var(--clr-border);
-
-            border-radius: 8px; color: var(--clr-text);
-
-            padding: .5rem .85rem; width: 100%; font-size: .93rem;
-
+            width: 100%; padding: .55rem .9rem; font-size: .93rem;
+            background: var(--clr-surface); color: var(--clr-text);
+            border: 1.5px solid var(--clr-border); border-radius: 12px;
             transition: border-color .2s, box-shadow .2s;
-
         }
+        .erp-input:focus { outline: none; border-color: var(--clr-gold); box-shadow: var(--glow); }
 
-        .erp-input:focus {
-
-            outline: none; border-color: var(--clr-sky);
-
-            box-shadow: 0 0 0 3px rgba(74,144,217,.18);
-
+        /* ============ BADGES ============ */
+        .badge-erp-active, .badge-erp-inactive, .badge-erp-gold {
+            display: inline-block; font-size: .74rem; font-weight: 600;
+            padding: .2rem .7rem; border-radius: 999px; border: 1px solid currentColor;
         }
+        .badge-erp-active   { background: rgba(18,161,80,.1);  color: var(--clr-ok); }
+        .badge-erp-inactive { background: rgba(217,45,32,.1);  color: var(--clr-danger); }
+        .badge-erp-gold     { background: var(--clr-cream);    color: var(--clr-gold); }
 
-        /* BADGES */
-
-        .badge-erp-active {
-
-            background: rgba(26,122,74,.12); color: var(--clr-ok);
-
-            border: 1px solid currentColor;
-
-            font-size: .75rem; padding: .2rem .6rem;
-
-            border-radius: 20px; font-weight: 600;
-
+        /* ============ ALERTAS ============ */
+        .erp-alert-danger, .erp-alert-info, .erp-alert-success {
+            border-radius: 12px; padding: .85rem 1.1rem; border: 1px solid var(--clr-border);
+            border-left-width: 4px; background: var(--clr-surface);
+            animation: slideIn .3s ease-out;
         }
+        .erp-alert-danger  { border-left-color: var(--clr-danger); }
+        .erp-alert-info    { border-left-color: var(--clr-sky); }
+        .erp-alert-success { border-left-color: var(--clr-ok); }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-6px); } }
 
-        .badge-erp-inactive {
-
-            background: rgba(192,57,43,.1); color: var(--clr-danger);
-
-            border: 1px solid currentColor;
-
-            font-size: .75rem; padding: .2rem .6rem; border-radius: 20px;
-
-        }
-
-        .badge-erp-gold {
-
-            background: var(--clr-cream); color: var(--clr-gold);
-
-            border: 1px solid var(--clr-gold);
-
-            font-size: .75rem; padding: .2rem .7rem;
-
-            border-radius: 20px; font-weight: 700;
-
-        }
-
-        /* ALERTAS */
-
-        .erp-alert-danger {
-
-            background: rgba(192,57,43,.08); border: 1px solid rgba(192,57,43,.3);
-
-            border-left: 5px solid var(--clr-danger); border-radius: 8px;
-
-            padding: 1rem 1.25rem;
-
-        }
-
-        .erp-alert-info {
-
-            background: var(--clr-ice); border: 1px solid var(--clr-border);
-
-            border-left: 5px solid var(--clr-sky); border-radius: 8px;
-
-            padding: 1rem 1.25rem;
-
-        }
-
-        .erp-alert-success {
-
-            background: rgba(26,122,74,.08); border: 1px solid rgba(26,122,74,.3);
-
-            border-left: 5px solid var(--clr-ok); border-radius: 8px;
-
-            padding: 1rem 1.25rem;
-
-        }
-
-        /* TÍTULO DE PÁGINA */
-
+        /* ============ TÍTULO DE PÁGINA ============ */
         .erp-page-title {
-
             display: flex; align-items: center; gap: 1rem;
-
             margin-bottom: 1.5rem; padding-bottom: .75rem;
-
-            border-bottom: 2px solid var(--clr-border);
-
+            border-bottom: 1px solid var(--clr-border);
         }
-
-        .erp-page-title h2 {
-
-            font-family: 'Playfair Display',serif;
-
-            font-size: 1.6rem; color: var(--clr-navy); margin: 0;
-
-        }
-
+        .erp-page-title h2 { font-size: 1.6rem; color: var(--clr-navy); margin: 0; }
         [data-theme="dark"] .erp-page-title h2 { color: var(--clr-sky); }
 
-        /* CÓDIGO */
-
         code, .mono {
-
-            font-family: 'JetBrains Mono',Consolas,monospace;
-
+            font-family: ui-monospace,'JetBrains Mono',Consolas,monospace;
             font-size: .85em; color: var(--clr-royal);
-
-            background: var(--clr-ice); padding: .1em .4em; border-radius: 4px;
-
+            background: var(--clr-ice); padding: .1em .4em; border-radius: 6px;
         }
+        [data-theme="dark"] code, [data-theme="dark"] .mono { color: var(--clr-sky); }
 
-        [data-theme="dark"] code,
-
-        [data-theme="dark"] .mono {
-
-            color: var(--clr-sky); background: rgba(74,144,217,.12);
-
-        }
-
-        /* FOOTER */
-
+        /* ============ FOOTER ============ */
         .erp-footer {
-
             background: var(--clr-navy); color: rgba(255,255,255,.6);
-
-            text-align: center; font-size: .78rem;
-
-            padding: .75rem; border-top: 2px solid var(--clr-gold);
-
+            text-align: center; font-size: .78rem; padding: .85rem;
+            border-top: 2px solid var(--clr-gold);
         }
 
+
+        /* ================= HALLOWEEN =================
+           Todo cuelga de <body class="halloween">. Quita esa clase y vuelve el estilo normal. */
+        [data-theme="light"] body.halloween {
+            --clr-navy: #2A1350; --clr-royal: #6A35B8; --clr-sky: #8E5BE0; --clr-ice: #F4EEFB;
+            --clr-gold: #E8700A; --clr-amber: #FF9A2E; --clr-cream: #FFF0DD;
+            --clr-bg: #F7F2FB; --clr-surface: #FFFFFF; --clr-text: #1F1533; --clr-muted: #6A5C84;
+            --clr-border: #DACBEE; --glass: rgba(42,19,80,.95);
+            --glow: 0 0 0 4px rgba(232,112,10,.28); --web: rgba(90,70,130,.4); --spider: #2A1350;
+        }
+        [data-theme="dark"] body.halloween {
+            --clr-navy: #2B1B52; --clr-royal: #6B3CC4; --clr-sky: #C3A2FF; --clr-ice: #1B1330;
+            --clr-gold: #FF8A1F; --clr-amber: #FFB04D; --clr-cream: #2B1A0B;
+            --clr-bg: #0F0A1A; --clr-surface: #1A1230; --clr-text: #EDE6FA; --clr-muted: #A99BC4;
+            --clr-border: #34265A; --glass: rgba(22,12,42,.95);
+            --glow: 0 0 0 4px rgba(255,138,31,.3); --web: rgba(230,220,250,.3); --spider: #1A1230;
+        }
+        body.halloween {
+            background-image:
+                radial-gradient(circle at 12% 0%, rgba(232,112,10,.10), transparent 40%),
+                radial-gradient(circle at 92% 8%, rgba(138,80,220,.14), transparent 45%);
+            background-attachment: fixed;
+        }
+        .erp-main { position: relative; overflow-x: clip; }
+        .erp-main > .container { position: relative; z-index: 1; }
+
+        /* telarañas en las cuatro esquinas */
+        .hw { position: absolute; width: 170px; height: 170px; color: var(--web, rgba(90,70,130,.4)); pointer-events: none; z-index: 0; }
+        .hw svg { width: 100%; height: 100%; display: block; }
+        .hw-tl { top: 0; left: 0; }
+        .hw-tr { top: 0; right: 0; transform: scaleX(-1); }
+        .hw-bl { bottom: 0; left: 0; transform: scaleY(-1); }
+        .hw-br { bottom: 0; right: 0; transform: scale(-1,-1); }
+
+        /* araña colgando */
+        .spider { position: absolute; top: 0; right: 118px; z-index: 1; pointer-events: none;
+                  display: flex; flex-direction: column; align-items: center; color: var(--web); }
+        .spider i { display: block; width: 1.2px; height: 70px; background: currentColor; animation: descend 14s ease-in-out infinite; }
+        .spider svg { width: 30px; height: 26px; margin-top: -2px; transform-origin: 50% 0; animation: swing 3s ease-in-out infinite; }
+        @keyframes descend {
+            0%   { height: 6px; }      /* arriba, escondida en la telaraña */
+            8%   { height: 6px; }
+            38%  { height: 210px; }    /* baja tejiendo su hilo */
+            50%  { height: 196px; }    /* rebota un poco */
+            58%  { height: 214px; }
+            72%  { height: 206px; }
+            92%  { height: 6px; }      /* vuelve a subir */
+            100% { height: 6px; }
+        }
+        @keyframes swing { 0%,100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+        @media (max-width: 700px) { .hw { width: 100px; height: 100px; } .spider { right: 70px; } }
+
+        @media (max-width: 720px) {
+            .erp-navbar { padding: .6rem 1rem; flex-wrap: wrap; }
+            .erp-nav-links { width: 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
     </style>
-
     {% block extra_css %}{% endblock %}
-
 </head>
+<body class="halloween">
+<!-- Sprite Halloween -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gPump" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB347"/><stop offset="1" stop-color="#E8650A"/></linearGradient>
+    <linearGradient id="gGhost" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DDE3F5"/></linearGradient>
+  </defs>
+  <symbol id="hw-web" viewBox="0 0 120 120">
+    <path d="M0 0 L118.0 0.0 M0 0 L112.2 36.5 M0 0 L95.5 69.4 M0 0 L69.4 95.5 M0 0 L36.5 112.2 M0 0 L0.0 118.0 M22.0 0.0 Q17.8 2.8 20.9 6.8 M20.9 6.8 Q16.1 8.2 17.8 12.9 M17.8 12.9 Q12.8 12.8 12.9 17.8 M12.9 17.8 Q8.2 16.1 6.8 20.9 M6.8 20.9 Q2.8 17.8 0.0 22.0 M42.0 0.0 Q34.0 5.4 39.9 13.0 M39.9 13.0 Q30.7 15.6 34.0 24.7 M34.0 24.7 Q24.4 24.4 24.7 34.0 M24.7 34.0 Q15.6 30.7 13.0 39.9 M13.0 39.9 Q5.4 34.0 0.0 42.0 M64.0 0.0 Q51.8 8.2 60.9 19.8 M60.9 19.8 Q46.8 23.8 51.8 37.6 M51.8 37.6 Q37.1 37.1 37.6 51.8 M37.6 51.8 Q23.8 46.8 19.8 60.9 M19.8 60.9 Q8.2 51.8 0.0 64.0 M88.0 0.0 Q71.3 11.3 83.7 27.2 M83.7 27.2 Q64.3 32.8 71.2 51.7 M71.2 51.7 Q51.0 51.0 51.7 71.2 M51.7 71.2 Q32.8 64.3 27.2 83.7 M27.2 83.7 Q11.3 71.3 0.0 88.0 M114.0 0.0 Q92.3 14.6 108.4 35.2 M108.4 35.2 Q83.3 42.4 92.2 67.0 M92.2 67.0 Q66.1 66.1 67.0 92.2 M67.0 92.2 Q42.4 83.3 35.2 108.4 M35.2 108.4 Q14.6 92.3 0.0 114.0" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="hw-ghost" viewBox="0 0 100 124">
+    <path d="M10 112 V52 C10 22 29 5 50 5 C71 5 90 22 90 52 V112 L77 100 L63 114 L50 100 L37 114 L23 100 Z" fill="url(#gGhost)" stroke="#BFC8E2" stroke-width="2" stroke-linejoin="round"/>
+    <ellipse cx="37" cy="50" rx="6" ry="9" fill="#1B1230"/><ellipse cx="63" cy="50" rx="6" ry="9" fill="#1B1230"/>
+    <circle cx="39" cy="46" r="2" fill="#fff"/><circle cx="65" cy="46" r="2" fill="#fff"/>
+    <ellipse cx="50" cy="74" rx="7" ry="10" fill="#1B1230"/>
+    <circle cx="28" cy="66" r="5" fill="#FFB3C7" opacity=".55"/><circle cx="72" cy="66" r="5" fill="#FFB3C7" opacity=".55"/>
+  </symbol>
+  <symbol id="hw-pumpkin" viewBox="0 0 120 112">
+    <ellipse cx="36" cy="68" rx="27" ry="38" fill="url(#gPump)" stroke="#B94A05" stroke-width="2"/>
+    <ellipse cx="84" cy="68" rx="27" ry="38" fill="url(#gPump)" stroke="#B94A05" stroke-width="2"/>
+    <ellipse cx="60" cy="66" rx="28" ry="41" fill="url(#gPump)" stroke="#B94A05" stroke-width="2"/>
+    <path d="M60 26 C56 50 56 84 60 106" stroke="#B94A05" stroke-width="1.5" fill="none" opacity=".45"/>
+    <path d="M54 28 C53 16 57 8 64 5 L71 10 C67 15 67 21 66 28 Z" fill="#5E7F2B" stroke="#3E5A1B" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M70 14 C82 8 90 14 86 24" fill="none" stroke="#5E7F2B" stroke-width="2.5" stroke-linecap="round"/>
+    <g fill="#FFE27A">
+      <path d="M36 60 L50 60 L43 45 Z"/><path d="M70 60 L84 60 L77 45 Z"/>
+      <path d="M56 70 L64 70 L60 63 Z"/>
+      <path d="M34 77 Q60 102 86 77 L80 86 L74 79 L68 90 L60 81 L52 90 L46 79 L40 86 Z"/>
+    </g>
+  </symbol>
+</svg>
 
-<body>
 
 <!-- NAVBAR -->
-
 <nav class="erp-navbar">
-
-    <a class="erp-brand" href="/">📦 ERP Django <span>· UTEC Celaya</span></a>
+    <a class="erp-brand" href="/">
+        <span class="mark">🎃</span>
+        <span>Press Start</span>
+    </a>
 
     <div class="erp-nav-links">
-
         <a href="{% url 'productos:lista' %}"
-
            class="erp-nav-link {% block nav_productos %}{% endblock %}">Productos</a>
-
         <a href="{% url 'clientes:lista' %}"
-
            class="erp-nav-link {% block nav_clientes %}{% endblock %}">Clientes</a>
-
         <a href="{% url 'proveedores:lista' %}"
-
            class="erp-nav-link {% block nav_proveedores %}{% endblock %}">Proveedores</a>
-
         <a href="{% url 'ventas:lista' %}"
-
            class="erp-nav-link {% block nav_ventas %}{% endblock %}">Ventas</a>
-
         <a href="{% url 'reportes:inicio' %}"
-
            class="erp-nav-link {% block nav_reportes %}{% endblock %}">Reportes</a>
-
         <a href="/admin/" class="erp-nav-link">Admin</a>
 
         {% if user.is_authenticated %}
-
-            <a href="/accounts/logout/" class="erp-nav-link">
-
-                Salir ({{ user.username }})
-
-            </a>
-
+            <a href="/accounts/logout/" class="erp-nav-link">Salir ({{ user.username }})</a>
         {% else %}
-
             <a href="/accounts/login/" class="erp-nav-link">Entrar</a>
-
         {% endif %}
 
-        <button class="theme-toggle" id="themeBtn" title="Modo claro/oscuro">🌙</button>
-
+        <button class="theme-toggle" id="themeBtn" title="Modo claro/oscuro"
+                aria-label="Cambiar tema">🌙</button>
     </div>
-
 </nav>
 
 <!-- MENSAJES FLASH -->
-
 {% if messages %}
-
 <div class="container mt-3">
-
     {% for m in messages %}
-
     <div class="erp-alert-{% if m.tags == 'error' %}danger{% elif m.tags == 'success' %}success{% else %}info{% endif %} d-flex justify-content-between align-items-center mb-2"
-
          role="alert">
-
         <span>{{ m }}</span>
-
-        <button onclick="this.parentElement.style.display='none'"
-
+        <button onclick="this.parentElement.style.display='none'" aria-label="Cerrar"
                 style="background:none;border:none;cursor:pointer;font-size:1.1rem;color:inherit;">×</button>
-
     </div>
-
     {% endfor %}
-
 </div>
-
 {% endif %}
 
 <!-- CONTENIDO PRINCIPAL -->
-
 <main class="erp-main">
-
-    <div class="container">
-
-        {% block content %}{% endblock %}
-
+    <!-- Decoración Halloween -->
+    <div class="hw hw-tl"><svg><use href="#hw-web"/></svg></div>
+    <div class="hw hw-tr"><svg><use href="#hw-web"/></svg></div>
+    <div class="hw hw-bl"><svg><use href="#hw-web"/></svg></div>
+    <div class="hw hw-br"><svg><use href="#hw-web"/></svg></div>
+    <div class="spider" aria-hidden="true"><i></i>
+        <svg viewBox="0 0 30 26"><g stroke="var(--spider)" stroke-width="1.6" fill="none" stroke-linecap="round">
+            <path d="M10 13 L2 8 M10 15 L1 15 M10 17 L2 23 M11 19 L5 25 M20 13 L28 8 M20 15 L29 15 M20 17 L28 23 M19 19 L25 25"/></g>
+            <ellipse cx="15" cy="17" rx="6.5" ry="7" fill="var(--spider)" stroke="#B58CFF" stroke-width=".8"/>
+            <circle cx="15" cy="9.5" r="4" fill="var(--spider)" stroke="#B58CFF" stroke-width=".8"/>
+            <circle cx="13.4" cy="9" r=".9" fill="#FF5B3C"/><circle cx="16.6" cy="9" r=".9" fill="#FF5B3C"/></svg>
     </div>
 
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
 </main>
 
 <!-- FOOTER -->
-
 <footer class="erp-footer">
-
-    ERP Django · Django 4.2 LTS · Fable 5 AzulERP · UTEC Celaya · Espiral 1
-
+    🎃 Press Start · Django 4.2 LTS · Fable 5 AzulERP · Espiral 1
 </footer>
 
 <!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
-
-</script>
-
-<!-- Toggle modo noche -->
-
+<!-- Modo noche + efecto ripple en botones -->
 <script>
-
 (function () {
-
-    var btn  = document.getElementById('themeBtn');
-
-    var html = document.documentElement;
-
+    var btn   = document.getElementById('themeBtn');
+    var html  = document.documentElement;
     var icons = { light: '🌙', dark: '☀️' };
-
-    var saved = localStorage.getItem('erpTheme') || 'light';
-
+    var saved = localStorage.getItem('erpTheme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     html.setAttribute('data-theme', saved);
-
-    if (btn) btn.textContent = icons[saved];
-
     if (btn) {
-
+        btn.textContent = icons[saved];
         btn.addEventListener('click', function () {
-
-            var current = html.getAttribute('data-theme');
-
-            var next    = current === 'light' ? 'dark' : 'light';
-
+            var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
             html.setAttribute('data-theme', next);
-
             btn.textContent = icons[next];
-
             localStorage.setItem('erpTheme', next);
-
         });
-
     }
 
+    document.addEventListener('click', function (e) {
+        var t = e.target.closest('.btn-erp-primary,.btn-erp-gold,.btn-erp-danger,.btn-erp-ghost');
+        if (!t) return;
+        var r = t.getBoundingClientRect(), s = Math.max(r.width, r.height) / 4;
+        var d = document.createElement('span');
+        d.className = 'ripple';
+        d.style.cssText = 'width:' + s + 'px;height:' + s + 'px;left:' +
+            (e.clientX - r.left - s / 2) + 'px;top:' + (e.clientY - r.top - s / 2) + 'px';
+        t.appendChild(d);
+        setTimeout(function () { d.remove(); }, 600);
+    });
 })();
-
 </script>
-
 {% block extra_js %}{% endblock %}
-
 </body>
-
 </html>
