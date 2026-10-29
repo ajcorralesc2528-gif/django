@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',    # ← agregar
     'whitenoise.runserver_nostatic',
     # Apps del ERP
+    'core',
     'clientes',
     'proveedores',
     'productos',
