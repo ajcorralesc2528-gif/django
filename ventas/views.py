@@ -4,11 +4,25 @@
 Lectura: VentaListView y VentaDetailView.
 Escritura (crear_venta): W08.
 """
+
+import io
+from datetime import date
+from django.http import HttpResponse, Http404
+from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
+from xhtml2pdf import pisa
+
+from .models import Venta
+from configuracion.models import ConfiguracionERP
+
 # ventas/views.py — actualizar imports al inicio:
 from django.contrib.auth.decorators import (
     login_required,
     permission_required,
 )
+
+
 from django.views.generic import DetailView, ListView
 
 from .models import Venta
@@ -23,6 +37,7 @@ from django.views.generic import DeleteView, DetailView, ListView
 
 from .forms  import DetalleVentaForm, VentaForm
 from .models import DetalleVenta, Venta
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
 
@@ -95,14 +110,77 @@ def crear_venta(request):
         'detalle_form': detalle_form,
     })
 
+@login_required
+def venta_pdf(request, venta_id: int) -> HttpResponse:
+    """Genera y descarga la factura en PDF usando xhtml2pdf (sin Docker)."""
+    venta = get_object_or_404(
+        Venta.objects
+        .select_related('cliente')
+        .prefetch_related('detalles__producto__categoria'),
+        pk=venta_id
+    )
+    
+    config = ConfiguracionERP.get_instance()
+    context = {
+        'venta': venta,
+        'config': config,
+        'hoy': date.today(),
+    }
+    
+    # Renderizar el HTML
+    html_string = render_to_string('ventas/factura_pdf.html', context, request=request)
+    
+    # Crear buffer en memoria para el PDF
+    buffer = io.BytesIO()
+    pisa_status = pisa.CreatePDF(src=html_string, dest=buffer)
+    
+    if pisa_status.err:
+        return HttpResponse('Error al generar el archivo PDF', status=500)
+        
+    buffer.seek(0)
+    response = HttpResponse(buffer.read(), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="factura_{venta.pk:05d}.pdf"'
+    return response
 
-class VentaDeleteView(LoginRequiredMixin, DeleteView):
-    """Confirmación y borrado de una venta (y sus detalles en cascada)."""
+@login_required
+def venta_pdf(request, venta_id: int) -> HttpResponse:
+    """Genera y descarga la factura en PDF usando xhtml2pdf (sin Docker)."""
+    venta = get_object_or_404(
+        Venta.objects
+        .select_related('cliente')
+        .prefetch_related('detalles__producto__categoria'),
+        pk=venta_id
+    )
+    
+    config = ConfiguracionERP.get_instance()
+    context = {
+        'venta': venta,
+        'config': config,
+        'hoy': date.today(),
+    }
+    
+    # Renderizar el HTML
+    html_string = render_to_string('ventas/factura_pdf.html', context, request=request)
+    
+    # Crear buffer en memoria para el PDF
+    buffer = io.BytesIO()
+    pisa_status = pisa.CreatePDF(src=html_string, dest=buffer)
+    
+    if pisa_status.err:
+        return HttpResponse('Error al generar el archivo PDF', status=500)
+        
+    buffer.seek(0)
+    response = HttpResponse(buffer.read(), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="factura_{venta.pk:05d}.pdf"'
+    return response
 
-    model         = Venta
-    template_name = 'ventas/eliminar.html'
-    pk_url_kwarg  = 'venta_id'
-    success_url   = reverse_lazy('ventas:lista')
+class VentaDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model               = Venta
+    template_name       = 'ventas/eliminar.html'
+    pk_url_kwarg        = 'venta_id'
+    success_url         = reverse_lazy('ventas:lista')
+    permission_required = 'ventas.delete_venta'
+
 
     def form_valid(self, form):
         pk       = self.object.pk
