@@ -77,7 +77,7 @@
     }
     .module-card::before {
         content: ""; position: absolute; inset: 0; opacity: 0; pointer-events: none;
-        background: radial-gradient(260px circle at var(--mx,50%) var(--my,50%), rgba(184,134,11,.14), transparent 70%);
+        background: radial-gradient(260px circle at var(--mx,50%) var(--my,50%), rgba(200,150,43,.16), transparent 70%);
         transition: opacity .25s;
     }
     .module-card:hover { border-top-color: var(--clr-gold); transform: translateY(-3px); }
@@ -92,57 +92,85 @@
     .stack-line { display: none; }
     .chips { display: flex; flex-wrap: wrap; gap: .6rem; margin: 0 0 2rem; }
     .chip {
+        --lift: 0px; --rx: 0deg; --ry: 0deg;
+        position: relative; overflow: hidden; isolation: isolate;
         display: inline-flex; align-items: center; gap: .55rem;
-        padding: .6rem 1.2rem; border-radius: 14px; text-decoration: none; margin-bottom: 5px;
+        padding: .62rem 1.3rem; border-radius: 18px; text-decoration: none; margin-bottom: 8px;
         background: linear-gradient(180deg, var(--clr-surface), var(--clr-ice)); color: var(--clr-text);
         font-weight: 700; font-size: .9rem; border: 2px solid var(--clr-border);
-        box-shadow: 0 5px 0 color-mix(in srgb, var(--clr-border), #000 22%), 0 10px 14px -6px rgba(10,35,66,.25), inset 0 1px 0 #fff;
-        transition: transform .12s, box-shadow .12s, border-color .2s;
+        box-shadow: 0 6px 0 color-mix(in srgb, var(--clr-border), #000 24%), 0 12px 16px -8px rgba(10,35,66,.28), inset 0 1px 0 #fff;
+        transform: perspective(520px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--lift));
+        transition: transform .16s cubic-bezier(.2,.9,.3,1.35), box-shadow .16s, border-color .2s, background .2s;
+        will-change: transform; -webkit-tap-highlight-color: transparent;
     }
-    .chip span.e { font-size: 1.2rem; }
-    .chip:hover { border-color: var(--clr-gold); color: var(--clr-text); transform: translateY(-2px);
-        box-shadow: 0 7px 0 color-mix(in srgb, var(--clr-gold), #000 40%), 0 14px 18px -6px rgba(10,35,66,.3), inset 0 1px 0 #fff; }
-    .chip:active { transform: translateY(4px);
-        box-shadow: 0 1px 0 color-mix(in srgb, var(--clr-gold), #000 40%), inset 0 2px 4px rgba(0,0,0,.18); }
+    .chip span.e { font-size: 1.25rem; display: inline-block; transition: transform .2s; }
+    .chip::after {                    /* brillo que cruza */
+        content: ""; position: absolute; top: -25%; bottom: -25%; left: 0; width: 34%; pointer-events: none; z-index: 1;
+        background: linear-gradient(100deg, transparent, rgba(255,255,255,.65), transparent);
+        transform: skewX(-20deg) translateX(-180%);
+    }
+    .chip:hover {
+        --lift: -4px; border-color: var(--clr-gold); color: var(--clr-text);
+        background: linear-gradient(180deg, var(--clr-cream), var(--clr-surface));
+        box-shadow: 0 10px 0 color-mix(in srgb, var(--clr-gold), #000 42%), 0 0 0 4px rgba(200,150,43,.22),
+                    0 0 24px rgba(242,193,78,.5), 0 20px 22px -8px rgba(10,35,66,.32), inset 0 1px 0 #fff;
+    }
+    .chip:hover::after { animation: xmShine .8s ease; }
+    .chip:hover span.e { animation: chipWiggle .6s ease; }
+    .chip:active {
+        --lift: 6px;
+        box-shadow: 0 1px 0 color-mix(in srgb, var(--clr-gold), #000 42%), inset 0 3px 6px rgba(0,0,0,.2);
+    }
+    .chip:focus-visible { outline: 3px solid var(--clr-amber); outline-offset: 4px; }
+    @keyframes chipWiggle { 0%,100% { transform: rotate(0) scale(1); } 25% { transform: rotate(-18deg) scale(1.25); } 60% { transform: rotate(14deg) scale(1.25); } }
 
 
-    /* ---------- HALLOWEEN: fantasmas y calabazas ---------- */
-    .hw-ghost { position: absolute; z-index: 2; cursor: pointer; filter: drop-shadow(0 6px 10px rgba(80,50,140,.35)) drop-shadow(0 0 14px rgba(255,255,255,.25));
+    /* ---------- NAVIDAD: esferas flotantes, árbol, muñeco y regalo ---------- */
+    .xm-float { position: absolute; z-index: 2; cursor: pointer;
+                filter: drop-shadow(0 6px 10px rgba(20,60,50,.32));
                 animation: floaty 5s ease-in-out infinite; transition: transform .25s; }
-    .hw-ghost svg { width: 100%; height: auto; display: block; }
-    .hw-ghost:hover { transform: scale(1.18) rotate(-6deg); }
-    .hw-ghost.g1 { width: 82px; left: 1%; top: 18%; animation-delay: 0s; }
-    .hw-ghost.g2 { width: 60px; right: 2%; top: 6%; animation-delay: -1.8s; opacity: .92; }
-    .hw-ghost.g3 { width: 44px; left: 24%; top: -2%; animation-delay: -3.2s; opacity: .8; }
+    .xm-float svg { width: 100%; height: auto; display: block; overflow: visible; }
+    .xm-float:hover { transform: scale(1.18) rotate(-6deg); }
+    .xm-float.g1 { width: 70px; left: 1%;  top: 18%; color: #D62839; animation-delay: 0s; }
+    .xm-float.g2 { width: 62px; right: 2%; top: 6%;  color: #F5C542; animation-delay: -1.8s; }
+    .xm-float.g3 { width: 44px; left: 24%; top: -2%; color: #2F8BE6; animation-delay: -3.2s; }
     @keyframes floaty { 0%,100% { translate: 0 0; } 50% { translate: 0 -16px; } }
 
-    .hw-pumpkin { position: absolute; z-index: 2; bottom: -6px; cursor: pointer;
-                  filter: drop-shadow(0 0 10px rgba(255,138,31,.55)) drop-shadow(0 6px 4px rgba(0,0,0,.3));
-                  animation: flicker 3.4s ease-in-out infinite; transition: transform .2s; }
-    .hw-pumpkin svg { width: 100%; height: auto; display: block; }
-    .hw-pumpkin:hover { transform: scale(1.12) rotate(4deg); }
-    .hw-pumpkin:active { transform: scale(.94) translateY(3px); }
-    .hw-pumpkin.p1 { width: 104px; left: -2%; }
-    .hw-pumpkin.p2 { width: 84px; right: -1%; animation-delay: -1.5s; }
-    .hw-pumpkin.p3 { width: 54px; left: 33%; bottom: -8px; animation-delay: -2.4s; }
-    @keyframes flicker {
-        0%,100% { filter: drop-shadow(0 0 10px rgba(255,138,31,.55)) drop-shadow(0 6px 4px rgba(0,0,0,.3)); }
-        45%     { filter: drop-shadow(0 0 20px rgba(255,170,60,.9)) drop-shadow(0 6px 4px rgba(0,0,0,.3)); }
-        60%     { filter: drop-shadow(0 0 7px rgba(255,138,31,.4)) drop-shadow(0 6px 4px rgba(0,0,0,.3)); }
+    .xm-deco { position: absolute; z-index: 2; bottom: -6px; cursor: pointer;
+               filter: drop-shadow(0 0 10px rgba(255,200,80,.5)) drop-shadow(0 6px 4px rgba(0,0,0,.28));
+               animation: twinkle 3.4s ease-in-out infinite; transition: transform .2s; }
+    .xm-deco svg { width: 100%; height: auto; display: block; overflow: visible; }
+    .xm-deco:hover { transform: scale(1.1) rotate(3deg); }
+    .xm-deco:active { transform: scale(.94) translateY(3px); }
+    .xm-deco.p1 { width: 98px; left: -2%; }
+    .xm-deco.p2 { width: 118px; right: -2%; animation-delay: -1.5s; }
+    .xm-deco.p4 { width: 84px; left: 13%; animation-delay: -.8s; }
+    .xm-deco.p3 { width: 54px; left: 33%; bottom: -8px; animation-delay: -2.4s; }
+    @keyframes twinkle {
+        0%,100% { filter: drop-shadow(0 0 10px rgba(255,200,80,.45)) drop-shadow(0 6px 4px rgba(0,0,0,.28)); }
+        45%     { filter: drop-shadow(0 0 20px rgba(255,225,120,.85)) drop-shadow(0 6px 4px rgba(0,0,0,.28)); }
+        60%     { filter: drop-shadow(0 0 7px rgba(255,200,80,.3)) drop-shadow(0 6px 4px rgba(0,0,0,.28)); }
     }
     .boo { position: absolute; z-index: 4; padding: .15rem .6rem; border-radius: 999px; font-weight: 700; font-size: .8rem;
-           background: var(--clr-gold); color: #fff; pointer-events: none; animation: boo 1s ease-out forwards; }
+           background: #D62839; color: #fff; pointer-events: none; animation: boo 1s ease-out forwards; }
     @keyframes boo { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-34px); } }
 
-    /* luces del control y audífonos en naranja */
-    .halloween svg [stroke="#4D8DFF"] { stroke: #FF8A1F; }
-    [data-theme="dark"] .welcome h1 { text-shadow: 0 0 22px rgba(255,138,31,.35); }
+    /* luces del control y audífonos: cambian de color como guirnalda */
+    .navidad .scene svg [stroke="#4D8DFF"] { stroke: #2EE08A; animation: ledXmas 4s linear infinite; }
+    @keyframes ledXmas {
+        0%   { stroke: #FF3B4A; }
+        25%  { stroke: #FFC83D; }
+        50%  { stroke: #2EE08A; }
+        75%  { stroke: #3DA5FF; }
+        100% { stroke: #FF3B4A; }
+    }
+    [data-theme="dark"] .welcome h1 { text-shadow: 0 0 22px rgba(242,193,78,.35); }
 
     @media (max-width: 700px) {
         .scene { flex-direction: column; align-items: center; gap: 1rem; }
         .scene-pad, .scene-hp { max-width: 320px; width: 100%; }
         .scene-hp { max-width: 220px; }
-        .hw-pumpkin.p3, .hw-ghost.g3 { display: none; }
+        .xm-deco.p3, .xm-deco.p4, .xm-float.g3 { display: none; }
     }
 </style>
 {% endblock %}
@@ -163,13 +191,14 @@
 <!-- CONTROL + AUDÍFONOS -->
 <div class="scene">
     <span class="scene-hint" id="padHint">Pulsa un botón</span>
-    <!-- Halloween -->
-    <div class="hw-ghost g1" title="¡Buuu!"><svg viewBox="0 0 100 124"><use href="#hw-ghost"/></svg></div>
-    <div class="hw-ghost g2" title="¡Buuu!"><svg viewBox="0 0 100 124"><use href="#hw-ghost"/></svg></div>
-    <div class="hw-ghost g3" title="¡Buuu!"><svg viewBox="0 0 100 124"><use href="#hw-ghost"/></svg></div>
-    <div class="hw-pumpkin p1"><svg viewBox="0 0 120 112"><use href="#hw-pumpkin"/></svg></div>
-    <div class="hw-pumpkin p2"><svg viewBox="0 0 120 112"><use href="#hw-pumpkin"/></svg></div>
-    <div class="hw-pumpkin p3"><svg viewBox="0 0 120 112"><use href="#hw-pumpkin"/></svg></div>
+    <!-- Navidad -->
+    <div class="xm-float g1" title="¡Ho ho ho!"><svg viewBox="0 0 60 76"><use href="#xm-bauble"/></svg></div>
+    <div class="xm-float g2" title="¡Ho ho ho!"><svg viewBox="0 0 100 100"><use href="#xm-star"/></svg></div>
+    <div class="xm-float g3" title="¡Ho ho ho!"><svg viewBox="0 0 60 76"><use href="#xm-bauble"/></svg></div>
+    <div class="xm-deco p1"><svg viewBox="0 0 100 214"><use href="#xm-tree"/></svg></div>
+    <div class="xm-deco p2"><svg viewBox="0 0 120 110"><use href="#xm-ghouse"/></svg></div>
+    <div class="xm-deco p4"><svg viewBox="0 0 100 120"><use href="#xm-ghouse2"/></svg></div>
+    <div class="xm-deco p3"><svg viewBox="0 0 60 60"><use href="#xm-gift"/></svg></div>
     <div class="scene-pad">
         <svg viewBox="0 0 480 310" role="group" aria-label="Control DualSense">
   <defs>
@@ -295,8 +324,8 @@
 </div>
 
 <div class="stage-actions">
-    <a href="{% url 'ventas:lista' %}" class="btn-erp-primary">Nueva venta</a>
-    <a href="{% url 'productos:lista' %}" class="btn-erp-ghost">Ver inventario</a>
+    <a href="{% url 'ventas:lista' %}" class="btn-erp-primary">🛒 Nueva venta</a>
+    <a href="{% url 'productos:lista' %}" class="btn-erp-ghost">📦 Ver inventario</a>
 </div>
 
 <!-- ACCESOS RÁPIDOS -->
@@ -338,12 +367,12 @@
     if (hp) bind(hp, 'Audífonos');
 
 
-    // ¡Buuu! al tocar un fantasma o calabaza
-    document.querySelectorAll('.hw-ghost, .hw-pumpkin').forEach(function (el) {
+    // ¡Ho ho ho! al tocar una esfera/estrella, ¡Feliz Navidad! al tocar árbol, muñeco o regalo
+    document.querySelectorAll('.xm-float, .xm-deco').forEach(function (el) {
         el.addEventListener('click', function () {
             var b = document.createElement('span');
             b.className = 'boo';
-            b.textContent = el.classList.contains('hw-ghost') ? '¡Buuu!' : '¡Truco o trato!';
+            b.textContent = el.classList.contains('xm-float') ? '¡Ho ho ho!' : '¡Feliz Navidad!';
             b.style.left = el.offsetLeft + 'px';
             b.style.top = (el.offsetTop - 10) + 'px';
             el.parentNode.appendChild(b);
@@ -369,7 +398,7 @@
             'Sistema de gestión empresarial · Espiral 1 W02',
             'Consolas PS5, audífonos y controles',
             'Inventario, ventas y reportes en un solo lugar',
-            'Truco o trato: todo bajo control 🎃'
+            'Felices fiestas: todo bajo control 🎄'
         ].map(function (p) { return Array.from(p); });
         tT.textContent = ''; tS.textContent = '';
         function type(el, chars, speed, done) {
