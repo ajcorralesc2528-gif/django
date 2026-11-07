@@ -404,7 +404,7 @@
             transition: transform .16s cubic-bezier(.2,.9,.3,1.35), box-shadow .16s ease, filter .2s;
             will-change: transform; user-select: none; -webkit-tap-highlight-color: transparent;
         }
-        /* variantes */
+        /* variantes: colores navideños (el hielo va solo en los botones de abajo del inicio) */
         body.navidad .btn-erp-primary { --top: #3BBE82; --bot: #14683F; --edge: #093A25; --ink: #fff; --rim: #F2C14E; --glowc: rgba(59,190,130,.6); }
         body.navidad .btn-erp-gold    { --top: #FFE08A; --bot: #E1A524; --edge: #7A5410; --ink: #3A2A05; --rim: #8A5F0C; --stripe: rgba(255,255,255,.30); --glowc: rgba(255,205,90,.7); text-shadow: 0 1px 0 rgba(255,255,255,.4); }
         body.navidad .btn-erp-danger  { --top: #FF6270; --bot: #BE1E2E; --edge: #5E0E16; --ink: #fff; --rim: #FFD3D6; --glowc: rgba(255,90,102,.6); }
@@ -457,16 +457,79 @@
         /* chispas al hacer clic */
         .xm-spark { position: fixed; z-index: 9999; pointer-events: none; line-height: 1; text-shadow: 0 0 8px currentColor; }
 
-        /* ---- navegación ---- */
-        body.navidad .erp-nav-link { position: relative; overflow: hidden; transition: background .18s, color .18s, transform .16s cubic-bezier(.2,.9,.3,1.35), box-shadow .2s; }
-        body.navidad .erp-nav-link::after {
-            content: ""; position: absolute; left: 50%; bottom: 3px; width: 0; height: 2px; border-radius: 2px;
-            background: var(--clr-gold); transform: translateX(-50%); transition: width .25s ease;
+        /* ---- NAVBAR NAVIDEÑA: pino y dorado, íconos, cuenta regresiva y Santa ---- */
+        body.navidad .erp-navbar {
+            background:
+                radial-gradient(circle at 15% 40%, rgba(255,255,255,.12) 0 1px, transparent 1.7px) 0 0 / 70px 46px,
+                radial-gradient(circle at 63% 70%, rgba(242,193,78,.16) 0 1px, transparent 1.7px) 0 0 / 97px 53px,
+                linear-gradient(180deg, rgba(22,78,57,.97), var(--glass));
+            border-bottom: 3px solid var(--clr-gold);
         }
-        body.navidad .erp-nav-link:hover { transform: translateY(-2px); box-shadow: 0 0 16px rgba(242,193,78,.4); }
-        body.navidad .erp-nav-link:hover::after, body.navidad .erp-nav-link.active::after { width: 62%; }
-        body.navidad .theme-toggle.spin { animation: xmSpin .6s cubic-bezier(.3,1.4,.5,1); }
-        @keyframes xmSpin { from { transform: rotate(0) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } to { transform: rotate(360deg) scale(1); } }
+        /* destello cálido que cruza la barra */
+        body.navidad .erp-navbar::before {
+            content: ""; position: absolute; inset: 0; pointer-events: none;
+            background: linear-gradient(105deg, transparent 42%, rgba(255,236,170,.16) 50%, transparent 58%) 0 0 / 250% 100%;
+            background-position: 150% 0; animation: frostGlint 8s ease-in-out infinite;
+        }
+        @keyframes frostGlint { 0%,55% { background-position: 150% 0; } 100% { background-position: -50% 0; } }
+        body.navidad .erp-nav-links { padding: 8px 10px 10px; margin: -8px -10px -10px; }
+
+        /* marca */
+        body.navidad .erp-brand .mark { color: var(--clr-gold); box-shadow: 0 0 14px rgba(242,193,78,.4), inset 0 0 8px rgba(242,193,78,.2); }
+        body.navidad .erp-brand .mark svg { width: 24px; height: 24px; animation: markSpin 18s linear infinite; }
+        body.navidad .erp-brand:hover .mark svg { animation-duration: 3s; }
+        body.navidad .erp-brand .bt { background: linear-gradient(180deg, #FFF3C4 10%, #E3A92B 100%); -webkit-background-clip: text; background-clip: text;
+                                       -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(242,193,78,.45)); }
+        @keyframes markSpin { to { transform: rotate(360deg); } }
+
+        /* cuenta regresiva */
+        .xm-count { display: inline-flex; align-items: center; gap: .4rem; padding: .3rem .85rem; border-radius: 999px; white-space: nowrap;
+                    font-size: .8rem; font-weight: 600; color: #FFF3CF; background: rgba(242,193,78,.12);
+                    border: 1px solid rgba(242,193,78,.5); box-shadow: inset 0 0 12px rgba(242,193,78,.16); }
+        .xm-count b { color: #fff; font-size: .95rem; text-shadow: 0 0 8px rgba(242,193,78,.9); }
+        @media (max-width: 1000px) { .xm-count { display: none; } }
+
+        /* enlaces de la barra */
+        body.navidad .erp-nav-link {
+            position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: .4rem;
+            padding: .42rem .95rem; border: 1px solid transparent;
+            transition: background .18s, color .18s, box-shadow .2s, border-color .2s, transform .16s cubic-bezier(.2,.9,.3,1.35);
+        }
+        body.navidad .erp-nav-link .ni { font-size: .95rem; display: inline-block; transition: transform .2s; }
+        body.navidad .erp-nav-link.erp-nav-cta { border-color: rgba(242,193,78,.55); background: rgba(242,193,78,.1); }
+        body.navidad .erp-nav-link:hover, body.navidad .erp-nav-link.active {
+            background: var(--clr-royal); color: #fff !important; border-color: rgba(242,193,78,.7);
+            transform: translateY(-2px);
+            box-shadow: 0 0 16px rgba(242,193,78,.4), 0 3px 0 #0C3B27, inset 0 -2px 0 var(--clr-gold);
+        }
+        body.navidad .erp-nav-link:hover .ni { transform: scale(1.25) rotate(-10deg); }
+        body.navidad .erp-nav-link:active { transform: translateY(1px) scale(.97); }
+
+        /* botón de tema: Santa Claus */
+        body.navidad .theme-toggle {
+            position: relative; display: grid; place-items: center; width: 50px; height: 50px; margin-left: .55rem; padding: 0;
+            border: 2px solid #F7D675; border-radius: 50%; overflow: visible; cursor: pointer;
+            background: radial-gradient(circle at 35% 28%, #FFF8E0 0, #F6D277 55%, #D9A02B 100%);
+            box-shadow: 0 4px 0 #7A5410, 0 0 18px rgba(242,193,78,.5), inset 0 1px 0 #fff;
+            transition: transform .16s cubic-bezier(.2,.9,.3,1.35), box-shadow .16s;
+        }
+        body.navidad .theme-toggle .santa-wrap { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; }
+        body.navidad .theme-toggle svg.santa { width: 100%; height: 100%; display: block; }
+        body.navidad .theme-toggle:hover { transform: translateY(-3px) scale(1.1); box-shadow: 0 7px 0 #7A5410, 0 0 28px rgba(255,220,120,.9), inset 0 1px 0 #fff; }
+        body.navidad .theme-toggle:active { transform: translateY(3px) scale(.95); box-shadow: 0 1px 0 #7A5410, 0 0 10px rgba(242,193,78,.5); }
+        body.navidad .theme-toggle:focus-visible { outline: 3px solid var(--clr-amber); outline-offset: 4px; }
+        body.navidad .theme-toggle .mode-badge {
+            position: absolute; right: -6px; bottom: -6px; z-index: 2; width: 21px; height: 21px; border-radius: 50%;
+            display: grid; place-items: center; font-size: .68rem; line-height: 1;
+            background: #0F3B2C; border: 1.5px solid #F7D675; box-shadow: 0 0 8px rgba(242,193,78,.55);
+        }
+        body.navidad .theme-toggle.spin { animation: xmNod .6s ease; }
+        @keyframes xmNod { 0% { transform: rotate(0); } 25% { transform: rotate(-14deg) scale(1.15); } 55% { transform: rotate(12deg) scale(1.15); } 100% { transform: rotate(0); } }
+        .sa-tip  { transform-origin: 46px 8px;  animation: saSwing 2.6s ease-in-out infinite; }
+        .sa-eyes { transform-origin: 32px 36px; animation: saBlink 4.5s infinite; }
+        .theme-toggle:hover .sa-tip { animation-duration: .5s; }
+        @keyframes saSwing { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(7deg); } }
+        @keyframes saBlink { 0%,92%,100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
 
         /* ---- ventanas encendidas y humo de las casas ---- */
         .xm-win { fill: #FFE08A; animation: xmWin 3.2s ease-in-out infinite; }
@@ -561,6 +624,15 @@
       <use href="#xm-arm" transform="rotate(180)"/><use href="#xm-arm" transform="rotate(240)"/><use href="#xm-arm" transform="rotate(300)"/>
     </g>
     <circle r="4" fill="currentColor"/>
+  </symbol>
+
+  <!-- copo grueso (logo) -->
+  <symbol id="xm-flake-bold" viewBox="-60 -60 120 120">
+    <g stroke="currentColor" stroke-width="8" stroke-linecap="round" fill="none">
+      <use href="#xm-arm"/><use href="#xm-arm" transform="rotate(60)"/><use href="#xm-arm" transform="rotate(120)"/>
+      <use href="#xm-arm" transform="rotate(180)"/><use href="#xm-arm" transform="rotate(240)"/><use href="#xm-arm" transform="rotate(300)"/>
+    </g>
+    <circle r="9" fill="currentColor"/>
   </symbol>
 
   <!-- pino con nieve en cada rama -->
@@ -692,31 +764,55 @@
 <!-- NAVBAR -->
 <nav class="erp-navbar">
     <a class="erp-brand" href="/">
-        <span class="mark">🎄</span>
-        <span>Press Start</span>
+        <span class="mark"><svg viewBox="-60 -60 120 120" aria-hidden="true"><use href="#xm-flake-bold"/></svg></span>
+        <span class="bt">Press Start</span>
     </a>
+
+    <span class="xm-count" id="xmCount" title="Cuenta regresiva para Navidad">🎄 Navidad</span>
 
     <div class="erp-nav-links">
         <a href="{% url 'productos:lista' %}"
-           class="erp-nav-link {% block nav_productos %}{% endblock %}">Productos</a>
+           class="erp-nav-link {% block nav_productos %}{% endblock %}"><span class="ni">📦</span>Productos</a>
         <a href="{% url 'clientes:lista' %}"
-           class="erp-nav-link {% block nav_clientes %}{% endblock %}">Clientes</a>
+           class="erp-nav-link {% block nav_clientes %}{% endblock %}"><span class="ni">👥</span>Clientes</a>
         <a href="{% url 'proveedores:lista' %}"
-           class="erp-nav-link {% block nav_proveedores %}{% endblock %}">Proveedores</a>
+           class="erp-nav-link {% block nav_proveedores %}{% endblock %}"><span class="ni">🏭</span>Proveedores</a>
         <a href="{% url 'ventas:lista' %}"
-           class="erp-nav-link {% block nav_ventas %}{% endblock %}">Ventas</a>
+           class="erp-nav-link {% block nav_ventas %}{% endblock %}"><span class="ni">🛒</span>Ventas</a>
         <a href="{% url 'reportes:inicio' %}"
-           class="erp-nav-link {% block nav_reportes %}{% endblock %}">Reportes</a>
-        <a href="/admin/" class="erp-nav-link">Admin</a>
+           class="erp-nav-link {% block nav_reportes %}{% endblock %}"><span class="ni">📊</span>Reportes</a>
+        <a href="{% url 'catalogo:catalogo' %}"
+           class="erp-nav-link {% block nav_catalogo %}{% endblock %}"><span class="ni">🏪</span>Tienda</a>
+        <!-- Contador del carrito en la navbar -->
+        {% if carrito_total_items > 0 %}
+        <a href="{% url 'catalogo:carrito' %}"
+           class="erp-nav-link"><span class="ni">🛍️</span>({{ carrito_total_items }})</a>
+        {% endif %}
+        <a href="/admin/" class="erp-nav-link"><span class="ni">⚙️</span>Admin</a>
 
         {% if user.is_authenticated %}
-            <a href="/accounts/logout/" class="erp-nav-link">Salir ({{ user.username }})</a>
+            <a href="/accounts/logout/" class="erp-nav-link erp-nav-cta"><span class="ni">🚪</span>Salir ({{ user.username }})</a>
         {% else %}
-            <a href="/accounts/login/" class="erp-nav-link">Entrar</a>
+            <a href="/accounts/login/" class="erp-nav-link erp-nav-cta"><span class="ni">🔑</span>Entrar</a>
         {% endif %}
 
-        <button class="theme-toggle" id="themeBtn" title="Modo claro/oscuro"
-                aria-label="Cambiar tema">🌙</button>
+        <button class="theme-toggle" id="themeBtn" title="¡Ho ho ho! Cambiar modo claro/oscuro"
+                aria-label="Cambiar tema">
+            <span class="santa-wrap"><svg class="santa" viewBox="0 0 64 64" aria-hidden="true">
+                <ellipse cx="32" cy="38" rx="14" ry="11.5" fill="#FFD3B3"/>
+                <path d="M13 40 Q11 64 32 66 Q53 64 51 40 Q45 52 32 51 Q19 52 13 40 Z" fill="#fff" stroke="#CFE0EE" stroke-width="1"/>
+                <ellipse cx="32" cy="51.5" rx="3.4" ry="2" fill="#B8323F"/>
+                <path d="M21 46 Q27 38 32 45 Q37 38 43 46 Q37 51 32 47.5 Q27 51 21 46 Z" fill="#fff" stroke="#CFE0EE" stroke-width="1"/>
+                <circle cx="32" cy="42" r="3.4" fill="#F29A7E"/>
+                <g class="sa-eyes"><ellipse cx="25.5" cy="36" rx="1.8" ry="2.3" fill="#1B1230"/><ellipse cx="38.5" cy="36" rx="1.8" ry="2.3" fill="#1B1230"/></g>
+                <circle cx="20.5" cy="41" r="3" fill="#FF8FA0" opacity=".5"/><circle cx="43.5" cy="41" r="3" fill="#FF8FA0" opacity=".5"/>
+                <path d="M12 24 C12 6 24 2 33 3 C45 4 52 12 52 24 Z" fill="#D62839" stroke="#9E1B29" stroke-width="1"/>
+                <path d="M20 10 Q26 5 33 6" stroke="#fff" stroke-width="1.6" opacity=".35" fill="none" stroke-linecap="round"/>
+                <g class="sa-tip"><path d="M46 8 Q60 8 59 24" fill="none" stroke="#D62839" stroke-width="6.5" stroke-linecap="round"/><circle cx="59" cy="26" r="5.5" fill="#fff" stroke="#CFE0EE" stroke-width="1"/></g>
+                <rect x="9" y="21" width="46" height="11" rx="5.5" fill="#fff" stroke="#CFE0EE" stroke-width="1"/>
+            </svg></span>
+            <span class="mode-badge" aria-hidden="true">🌙</span>
+        </button>
     </div>
 
     <!-- Navidad: luces de colores (las bombillas se generan por JS) -->
@@ -926,17 +1022,18 @@
 <script>
 (function () {
     var btn   = document.getElementById('themeBtn');
+    var badge = btn ? btn.querySelector('.mode-badge') : null;
     var html  = document.documentElement;
     var icons = { light: '🌙', dark: '☀️' };
     var saved = localStorage.getItem('erpTheme') ||
         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     html.setAttribute('data-theme', saved);
     if (btn) {
-        btn.textContent = icons[saved];
+        if (badge) badge.textContent = icons[saved];
         btn.addEventListener('click', function () {
             var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
             html.setAttribute('data-theme', next);
-            btn.textContent = icons[next];
+            if (badge) badge.textContent = icons[next];
             localStorage.setItem('erpTheme', next);
         });
     }
@@ -959,6 +1056,16 @@
 <script>
 (function () {
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ---------- Cuenta regresiva a Navidad ---------- */
+    var cd = document.getElementById('xmCount');
+    if (cd) {
+        var now = new Date(), y = now.getFullYear();
+        var today = new Date(y, now.getMonth(), now.getDate());
+        var d = Math.round((new Date(y, 11, 25) - today) / 864e5);
+        if (d < 0) d = Math.round((new Date(y + 1, 11, 25) - today) / 864e5);
+        cd.innerHTML = d === 0 ? '🎄 ¡Feliz Navidad!' : '🎄 Faltan <b>' + d + '</b> ' + (d === 1 ? 'día' : 'días');
+    }
 
     /* ---------- Luces: una bombilla cada 44px ---------- */
     var ul = document.getElementById('xmLights');
