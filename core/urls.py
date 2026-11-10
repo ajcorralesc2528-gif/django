@@ -18,7 +18,6 @@ api_urlpatterns = (
     proveedores_api +
     ventas_api
 )
-
 # core/urls.py — agregar la ruta del catálogo:
 urlpatterns = [
     path('admin/',      admin.site.urls),
