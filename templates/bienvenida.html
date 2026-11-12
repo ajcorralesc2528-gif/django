@@ -172,6 +172,220 @@
         .scene-hp { max-width: 220px; }
         .xm-deco.p3, .xm-deco.p4, .xm-float.g3 { display: none; }
     }
+
+    /* ================= BOTONES 3D MINIMALISTAS (solo inicio) =================
+       Color sólido + borde inferior grueso que hace de "volumen".
+       Para cambiar colores: --face (frente) y --edge (borde 3D) en cada grupo. */
+    body.navidad .stage-actions .btn-erp-primary,
+    body.navidad .stage-actions .btn-erp-ghost,
+    body.navidad .chips .chip {
+        --lift: 0px; --face: #E23A4E; --edge: #8F1625; --ink: #FFFFFF;
+        background: var(--face); color: var(--ink); border: none; border-radius: 16px;
+        padding: .8rem 1.8rem; margin: 0 0 8px; overflow: visible; animation: none;
+        font-weight: 700; letter-spacing: .01em; text-shadow: none;
+        box-shadow: 0 6px 0 var(--edge), 0 12px 16px -6px rgba(0,0,0,.4);
+    }
+    /* secundarios: crema */
+    body.navidad .stage-actions .btn-erp-ghost,
+    body.navidad .chips .chip { --face: #FFF4E0; --edge: #C9A56A; --ink: #3A2410; }
+    body.navidad .chips .chip { padding: .65rem 1.4rem; font-size: .9rem; border-radius: 14px; }
+
+    /* sin brillos ni rayas: limpio */
+    body.navidad .stage-actions .btn-erp-primary::before, body.navidad .stage-actions .btn-erp-primary::after,
+    body.navidad .stage-actions .btn-erp-ghost::before,   body.navidad .stage-actions .btn-erp-ghost::after,
+    body.navidad .chips .chip::before, body.navidad .chips .chip::after { display: none; }
+
+    /* hover: sube y se hace más alto */
+    body.navidad .stage-actions .btn-erp-primary:hover,
+    body.navidad .stage-actions .btn-erp-ghost:hover,
+    body.navidad .chips .chip:hover {
+        --lift: -3px; animation: none; filter: none; border: none; color: var(--ink);
+        box-shadow: 0 9px 0 var(--edge), 0 16px 20px -6px rgba(0,0,0,.45);
+    }
+    body.navidad .stage-actions .btn-erp-primary:hover { --face: #EC4A5D; }
+    body.navidad .stage-actions .btn-erp-ghost:hover,
+    body.navidad .chips .chip:hover { --face: #FFFFFF; }
+
+    /* pulsación: se hunde */
+    body.navidad .stage-actions .btn-erp-primary:active,
+    body.navidad .stage-actions .btn-erp-ghost:active,
+    body.navidad .chips .chip:active {
+        --lift: 5px; box-shadow: 0 1px 0 var(--edge), 0 3px 6px -2px rgba(0,0,0,.4);
+    }
+
+    /* ---------- Iconos minimalistas animados ---------- */
+    .ic { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9;
+          stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+    .chip:hover span.e { animation: none; }
+    .chip span.e { display: inline-flex; }
+
+    .ic-cart .w { fill: currentColor; stroke: none; }
+    a:hover .ic-cart { animation: icRoll .7s ease-in-out infinite; }
+    @keyframes icRoll { 0%,100% { transform: translateX(-2px); } 50% { transform: translateX(3px); } }
+
+    .ic-box { animation: icBob 3s ease-in-out infinite; }
+    a:hover .ic-box { animation: icHop .6s ease infinite; }
+    @keyframes icBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+    @keyframes icHop { 0%,100% { transform: translateY(0) rotate(0); } 40% { transform: translateY(-4px) rotate(-6deg); } }
+
+    .ic-pad .d { fill: currentColor; stroke: none; animation: icBlink 1.6s infinite; }
+    .ic-pad .d:nth-of-type(2) { animation-delay: .8s; }
+    a:hover .ic-pad { animation: icTilt .5s ease infinite; }
+    @keyframes icBlink { 0%,100% { opacity: 1; } 50% { opacity: .2; } }
+    @keyframes icTilt { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+
+    .ic-hp .cup { transform-box: fill-box; transform-origin: center; animation: icBeat 1.2s ease-in-out infinite; }
+    .ic-hp .cup.r { animation-delay: .6s; }
+    a:hover .ic-hp .cup { animation-duration: .45s; }
+    @keyframes icBeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+
+    .ic-stick .st { transform-origin: 12px 14px; animation: icStick 2.4s ease-in-out infinite; }
+    a:hover .ic-stick .st { animation-duration: .5s; }
+    @keyframes icStick { 0%,100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
+
+    /* ===== NAVIDAD EXTRA (barra superior y botones globales) ===== */
+    /* ---------- Botones 3D minimalistas en TODAS las páginas ---------- */
+    body.navidad .btn-erp-primary, body.navidad .btn-erp-gold,
+    body.navidad .btn-erp-danger,  body.navidad .btn-erp-ghost {
+        --lift: 0px; --face: #E23A4E; --edge: #8F1625; --ink: #FFFFFF;
+        background: var(--face); color: var(--ink); border: none; border-radius: 14px;
+        padding: .7rem 1.6rem; margin-bottom: 8px; animation: none; text-shadow: none;
+        font-weight: 700; letter-spacing: .01em;
+        box-shadow: 0 6px 0 var(--edge), 0 12px 16px -6px rgba(0,0,0,.35);
+    }
+    body.navidad .btn-erp-gold   { --face: #F5B93A; --edge: #9A6A0C; --ink: #3A2605; }
+    body.navidad .btn-erp-danger { --face: #7A1424; --edge: #3E0911; }
+    body.navidad .btn-erp-ghost  { --face: #FFF4E0; --edge: #C9A56A; --ink: #3A2410; }
+    body.navidad .btn-erp-sm { padding: .4rem 1rem; border-radius: 11px; box-shadow: 0 4px 0 var(--edge), 0 8px 12px -4px rgba(0,0,0,.3); }
+    body.navidad .btn-erp-primary::before, body.navidad .btn-erp-primary::after,
+    body.navidad .btn-erp-gold::before,    body.navidad .btn-erp-gold::after,
+    body.navidad .btn-erp-danger::before,  body.navidad .btn-erp-danger::after,
+    body.navidad .btn-erp-ghost::before,   body.navidad .btn-erp-ghost::after { display: none; }
+    body.navidad .btn-erp-primary:hover, body.navidad .btn-erp-gold:hover,
+    body.navidad .btn-erp-danger:hover,  body.navidad .btn-erp-ghost:hover {
+        --lift: -3px; animation: none; filter: brightness(1.06); color: var(--ink);
+        box-shadow: 0 9px 0 var(--edge), 0 16px 20px -6px rgba(0,0,0,.4);
+    }
+    body.navidad .btn-erp-primary:active, body.navidad .btn-erp-gold:active,
+    body.navidad .btn-erp-danger:active,  body.navidad .btn-erp-ghost:active {
+        --lift: 5px; box-shadow: 0 1px 0 var(--edge), 0 3px 6px -2px rgba(0,0,0,.4);
+    }
+
+    /* ---------- Barra superior: botones 3D minimalistas ---------- */
+    body.navidad .erp-navbar { overflow-x: clip; border-bottom-color: transparent; }
+    body.navidad .erp-nav-links { padding: 18px 12px 12px; margin: -18px -12px -12px; }
+    body.navidad .erp-nav-link {
+        --face: #1B5E43; --edge: #06241A;
+        position: relative; overflow: visible; border: none; border-radius: 12px;
+        padding: .5rem 1.05rem; margin: 0 .15rem;
+        background: var(--face); color: #fff !important;
+        box-shadow: 0 4px 0 var(--edge), 0 8px 12px -4px rgba(0,0,0,.45);
+    }
+    body.navidad .erp-nav-link:hover, body.navidad .erp-nav-link.active {
+        --face: #D62839; --edge: #7A0F1B;
+        background: var(--face); color: #fff !important; border: none;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 0 var(--edge), 0 12px 16px -4px rgba(0,0,0,.5);
+    }
+    body.navidad .erp-nav-link:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--edge); }
+    body.navidad .erp-nav-link.erp-nav-cta { --face: #F2B035; --edge: #8A5F0C; border: none; color: #2A1D05 !important; }
+    body.navidad .erp-nav-link.erp-nav-cta:hover { --face: #FFD060; --edge: #8A5F0C; color: #2A1D05 !important; }
+
+    /* gorro de Santa (links impares) y acebo (links pares) */
+    body.navidad .erp-nav-link::before {
+        content: ""; position: absolute; pointer-events: none; z-index: 2;
+        top: -14px; left: -7px; width: 26px; height: 21px; transform-origin: 20% 90%; transform: rotate(-16deg);
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 34'><path d='M6 26 C8 10 20 4 32 8 C28 12 28 18 34 26 Z' fill='%23D62839' stroke='%239E1B29' stroke-width='1'/><rect x='3' y='24' width='34' height='8' rx='4' fill='white'/><circle cx='33' cy='8' r='4.5' fill='white'/></svg>") no-repeat center / contain;
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,.35));
+    }
+    body.navidad .erp-nav-link:nth-of-type(even)::before {
+        top: -10px; left: auto; right: -5px; width: 24px; height: 17px; transform: rotate(8deg);
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 28'><path d='M20 16 C14 4 4 4 2 10 C8 8 14 12 20 16 Z M20 16 C26 4 36 4 38 10 C32 8 26 12 20 16 Z' fill='%232E9E4F' stroke='%231C6B33' stroke-width='1'/><circle cx='17' cy='19' r='4.2' fill='%23E5273A'/><circle cx='24' cy='20' r='4.2' fill='%23E5273A'/><circle cx='20.5' cy='14.5' r='3.6' fill='%23E5273A'/></svg>") no-repeat center / contain;
+    }
+    body.navidad .erp-nav-link:hover::before { animation: xmHatWag .5s ease-in-out infinite; }
+    @keyframes xmHatWag { 0%,100% { rotate: 0deg; } 50% { rotate: 10deg; } }
+
+    /* gorro de Santa sobre el logo */
+    body.navidad .erp-brand .mark { position: relative; }
+    body.navidad .erp-brand .mark::after {
+        content: ""; position: absolute; top: -13px; left: -9px; width: 28px; height: 23px; transform: rotate(-18deg);
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 34'><path d='M6 26 C8 10 20 4 32 8 C28 12 28 18 34 26 Z' fill='%23D62839' stroke='%239E1B29' stroke-width='1'/><rect x='3' y='24' width='34' height='8' rx='4' fill='white'/><circle cx='33' cy='8' r='4.5' fill='white'/></svg>") no-repeat center / contain;
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,.4)); pointer-events: none;
+    }
+
+    /* cuenta regresiva con capa de nieve */
+    body.navidad .xm-count { position: relative; }
+    body.navidad .xm-count::before {
+        content: ""; position: absolute; left: -2px; right: -2px; top: -7px; height: 14px; pointer-events: none;
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='38' height='22'><path d='M0 9 Q3 2 9 4 Q14 -1 19 4 Q25 0 30 4 Q36 2 38 9 L38 12 Q35 18 31 12 Q28 15 25 12 Q22 21 17 12 Q13 16 9 12 Q5 17 0 12 Z' fill='white'/></svg>") repeat-x center top / 28px 16px;
+        filter: drop-shadow(0 2px 1px rgba(0,0,0,.3));
+    }
+
+    /* borde inferior de bastón de caramelo */
+    body.navidad .erp-navbar::after {
+        content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 6px; pointer-events: none;
+        background: repeating-linear-gradient(-45deg, #D62839 0 9px, #FFFFFF 9px 18px);
+        box-shadow: 0 2px 6px rgba(0,0,0,.35);
+    }
+
+    /* guirnalda de pino con bayas (inyectada por JS) */
+    .xm-garland {
+        position: absolute; left: 0; right: 0; top: 0; height: 16px; z-index: 1; pointer-events: none;
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='16' viewBox='0 0 60 16'><path d='M0 3 Q15 15 30 3 Q45 15 60 3' fill='none' stroke='%231B6B45' stroke-width='5' stroke-linecap='round'/><path d='M0 3 Q15 15 30 3 Q45 15 60 3' fill='none' stroke='%2338A870' stroke-width='2' stroke-dasharray='2 4' stroke-linecap='round'/><circle cx='15' cy='10' r='2.6' fill='%23D62839'/><circle cx='45' cy='10' r='2.6' fill='%23D62839'/><circle cx='30' cy='3' r='2.4' fill='%23F2C14E'/></svg>") repeat-x 0 0 / 60px 16px;
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,.3));
+    }
+
+    /* trineo con renos que cruza la barra de vez en cuando */
+    .xm-sleigh {
+        position: absolute; top: 2px; left: 0; z-index: 3; font-size: 22px; line-height: 1; white-space: nowrap;
+        pointer-events: none; filter: drop-shadow(0 2px 3px rgba(0,0,0,.4));
+        transform: translateX(calc(100vw + 20px)); animation: xmSleigh 30s linear infinite 4s;
+    }
+    @keyframes xmSleigh {
+        0%   { transform: translateX(calc(100vw + 20px)) translateY(0); }
+        8%   { transform: translateX(70vw) translateY(-3px); }
+        16%  { transform: translateX(40vw) translateY(2px); }
+        24%  { transform: translateX(10vw) translateY(-3px); }
+        32%, 100% { transform: translateX(-200px) translateY(0); }
+    }
+
+    /* ================= TARJETAS-BOTÓN DE MÓDULOS: 3D dorado + flor de nochebuena =================
+       Color: --face (frente) y --edge (borde 3D). La flor es el SVG de --poin. */
+    :root {
+        --poin: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'><defs><path id='l' d='M40 40 C28 32 26 12 40 6 C54 12 52 32 40 40Z'/><path id='p' d='M40 40 C33 30 34 14 40 5 C46 14 47 30 40 40Z'/><path id='q' d='M40 40 C36 34 36 26 40 20 C44 26 44 34 40 40Z'/></defs><g fill='%23277A4B' stroke='%231C5A37' stroke-width='.8'><use href='%23l' transform='rotate(22 40 40)'/><use href='%23l' transform='rotate(112 40 40)'/><use href='%23l' transform='rotate(202 40 40)'/><use href='%23l' transform='rotate(292 40 40)'/></g><g fill='%23D62839' stroke='%239E1B29' stroke-width='.8'><use href='%23p'/><use href='%23p' transform='rotate(45 40 40)'/><use href='%23p' transform='rotate(90 40 40)'/><use href='%23p' transform='rotate(135 40 40)'/><use href='%23p' transform='rotate(180 40 40)'/><use href='%23p' transform='rotate(225 40 40)'/><use href='%23p' transform='rotate(270 40 40)'/><use href='%23p' transform='rotate(315 40 40)'/></g><g fill='%23F0505F'><use href='%23q' transform='rotate(22 40 40)'/><use href='%23q' transform='rotate(67 40 40)'/><use href='%23q' transform='rotate(112 40 40)'/><use href='%23q' transform='rotate(157 40 40)'/><use href='%23q' transform='rotate(202 40 40)'/><use href='%23q' transform='rotate(247 40 40)'/><use href='%23q' transform='rotate(292 40 40)'/><use href='%23q' transform='rotate(337 40 40)'/></g><circle cx='40' cy='40' r='6' fill='%23F2C14E' stroke='%23B8860B' stroke-width='1'/><g fill='%23B8860B'><circle cx='38' cy='38' r='1.2'/><circle cx='42.5' cy='39' r='1.2'/><circle cx='39.5' cy='43' r='1.2'/></g></svg>");
+    }
+    body.navidad .module-card {
+        --face: #F5C451; --edge: #9A6A12;
+        background: var(--face); border: none; border-radius: 18px; overflow: hidden;
+        padding: 1.9rem 1.2rem 1.5rem;
+        box-shadow: 0 7px 0 var(--edge), 0 14px 18px -8px rgba(0,0,0,.5);
+        transition: transform .16s cubic-bezier(.2,.9,.3,1.35), box-shadow .16s;
+    }
+    body.navidad .module-card > * { position: relative; z-index: 1; }
+    body.navidad .module-card strong { color: #3A2410; }
+    body.navidad .module-card p { color: #5A4020; }
+    body.navidad .module-card::before {
+        background: radial-gradient(260px circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,.4), transparent 70%);
+    }
+    /* flores de nochebuena en las esquinas */
+    body.navidad .module-card::after {
+        content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+        background:
+            var(--poin) no-repeat right -14px top -14px / 78px 78px,
+            var(--poin) no-repeat left -12px bottom -12px / 46px 46px;
+        transition: transform .3s cubic-bezier(.2,.9,.3,1.35);
+    }
+    body.navidad .module-card:hover {
+        border: none; transform: translateY(-4px);
+        box-shadow: 0 11px 0 var(--edge), 0 20px 24px -8px rgba(0,0,0,.55);
+    }
+    body.navidad .module-card:hover::after { animation: poinSway 1.4s ease-in-out infinite; }
+    body.navidad .module-card:active { transform: translateY(5px); box-shadow: 0 2px 0 var(--edge), 0 4px 8px -4px rgba(0,0,0,.5); }
+    @keyframes poinSway {
+        0%,100% { background-position: right -14px top -14px, left -12px bottom -12px; }
+        50%     { background-position: right -10px top -10px, left -8px bottom -8px; }
+    }
+    body.navidad .module-card:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
 </style>
 {% endblock %}
 
@@ -324,15 +538,27 @@
 </div>
 
 <div class="stage-actions">
-    <a href="{% url 'ventas:lista' %}" class="btn-erp-primary">🛒 Nueva venta</a>
-    <a href="{% url 'productos:lista' %}" class="btn-erp-ghost">📦 Ver inventario</a>
+    <a href="{% url 'ventas:lista' %}" class="btn-erp-primary">
+        <svg class="ic ic-cart" viewBox="0 0 24 24"><path d="M3 4h2.5l2 11h10l2-8H6.5"/><circle class="w" cx="9" cy="19.5" r="1.5"/><circle class="w" cx="17" cy="19.5" r="1.5"/></svg>
+        Nueva venta
+    </a>
+    <a href="{% url 'productos:lista' %}" class="btn-erp-ghost">
+        <svg class="ic ic-box" viewBox="0 0 24 24"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg>
+        Ver inventario
+    </a>
 </div>
 
 <!-- ACCESOS RÁPIDOS -->
 <div class="chips" style="justify-content:center">
-    <a class="chip" href="{% url 'productos:lista' %}?q=PS5"><span class="e">🎮</span> Consolas PS5</a>
-    <a class="chip" href="{% url 'productos:lista' %}?q=Audifonos"><span class="e">🎧</span> Audífonos</a>
-    <a class="chip" href="{% url 'productos:lista' %}?q=Control"><span class="e">🕹️</span> Controles</a>
+    <a class="chip" href="{% url 'productos:lista' %}?q=PS5"><span class="e">
+        <svg class="ic ic-pad" viewBox="0 0 24 24"><path d="M7 7h10a4 4 0 0 1 3.9 4.9l-.8 4a2.4 2.4 0 0 1-4.1 1.1L14.5 15h-5L8 17a2.4 2.4 0 0 1-4.1-1.1l-.8-4A4 4 0 0 1 7 7z"/><path d="M8 10v3M6.5 11.5h3"/><circle class="d" cx="15.5" cy="10.5" r="1"/><circle class="d" cx="17.5" cy="12.5" r="1"/></svg>
+    </span> Consolas PS5</a>
+    <a class="chip" href="{% url 'productos:lista' %}?q=Audifonos"><span class="e">
+        <svg class="ic ic-hp" viewBox="0 0 24 24"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect class="cup" x="3" y="14" width="4.5" height="6.5" rx="2"/><rect class="cup r" x="16.5" y="14" width="4.5" height="6.5" rx="2"/></svg>
+    </span> Audífonos</a>
+    <a class="chip" href="{% url 'productos:lista' %}?q=Control"><span class="e">
+        <svg class="ic ic-stick" viewBox="0 0 24 24"><g class="st"><circle cx="12" cy="6" r="2.6"/><path d="M12 8.6V14"/></g><rect x="4" y="14" width="16" height="6.5" rx="3"/></svg>
+    </span> Controles</a>
 </div>
 
 <!-- MÓDULOS -->
@@ -428,5 +654,18 @@
         });
     })();
 })();
+
+(function () {
+    function add() {
+        var nav = document.querySelector('.erp-navbar');
+        if (!nav || nav.querySelector('.xm-garland')) return;
+        var g = document.createElement('div'); g.className = 'xm-garland'; g.setAttribute('aria-hidden', 'true');
+        var s = document.createElement('span'); s.className = 'xm-sleigh'; s.setAttribute('aria-hidden', 'true');
+        s.textContent = '🦌🦌🛷';
+        nav.appendChild(g); nav.appendChild(s);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', add); else add();
+})();
+
 </script>
 {% endblock %}
