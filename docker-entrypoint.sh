@@ -8,6 +8,9 @@ set -e   # detener si cualquier comando falla
 echo "==> [entrypoint] Ejecutando migraciones de base de datos..."
 python manage.py migrate --noinput
 
+echo "==> [entrypoint] Creando superusuario si no existe..."
+python manage.py createsuperuser --noinput || true
+
 echo "==> [entrypoint] Recolectando archivos estáticos..."
 python manage.py collectstatic --noinput --clear
 
