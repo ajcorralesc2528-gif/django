@@ -59,7 +59,16 @@ SECURE_REFERRER_POLICY         = 'same-origin'
 
 # ── ARCHIVOS ESTÁTICOS ─────────────────────────────────────────────────────
 # WhiteNoise ya configurado en settings.py; solo confirmar almacenamiento
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# CORREGIDO: se usa STORAGES (no STATICFILES_STORAGE) porque settings.py
+# ya define STORAGES y Django no permite mezclar ambos estilos.
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 # ── LOGGING: solo WARNING y superiores en producción ──────────────────────
 LOGGING = {
@@ -101,7 +110,10 @@ _bucket = os.environ.get('AWS_STORAGE_BUCKET_NAME', '')
 
 if _bucket:
     # Solo activa S3 si la variable de entorno está configurada
-    DEFAULT_FILE_STORAGE  = 'storages.backends.s3boto3.S3Boto3Storage'
+    # CORREGIDO: STORAGES["default"] en lugar de DEFAULT_FILE_STORAGE
+    STORAGES["default"] = {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    }
     AWS_ACCESS_KEY_ID     = os.environ.get('AWS_ACCESS_KEY_ID', '')
     AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
     AWS_STORAGE_BUCKET_NAME = _bucket
