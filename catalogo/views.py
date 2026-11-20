@@ -20,6 +20,7 @@ from ventas.tasks import enviar_confirmacion_pedido
 
 import logging
 from decimal import Decimal
+logger = logging.getLogger(__name__)
 
 import stripe
 from django.conf import settings
@@ -347,7 +348,12 @@ def pago_exitoso(request, pedido_id: int):
     # ── NUEVO W16: disparar tarea asíncrona de confirmación ───────────
     # .delay() envía la tarea al broker Redis de forma no bloqueante.
     # El worker la ejecutará en segundo plano.
-    enviar_confirmacion_pedido.delay(pedido.pk)
+    try:
+        enviar_confirmacion_pedido.delay(pedido.pk)
+    except Exception as exc:
+        logger.error(
+            f'No se pudo encolar el correo del pedido {pedido.pk}: {exc}'
+        )
     # ──────────────────────────────────────────────────────────────────
 
     messages.success(

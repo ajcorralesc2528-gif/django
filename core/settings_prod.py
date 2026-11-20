@@ -125,5 +125,8 @@ if _bucket:
 
     # core/settings_prod.py — agregar:
 
-    # En producción: usar SendGrid via anymail
-    EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend'
+# En producción: usar SendGrid via anymail
+EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend'
+
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True
