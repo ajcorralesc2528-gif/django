@@ -15,9 +15,6 @@ Estructura del carrito en sesión:
         ...
     }
 """
-# catalogo/views.py — agregar import al inicio:
-from ventas.tasks import enviar_confirmacion_pedido
-
 import logging
 from decimal import Decimal
 logger = logging.getLogger(__name__)
@@ -329,37 +326,28 @@ def checkout(request):
         'publishable_key': publishable_key,
     })
 
-
-# Actualizar la función pago_exitoso():
+# catalogo/views.py
 def pago_exitoso(request, pedido_id: int):
-    """Vista de confirmación post-pago exitoso — W16.
+    """Vista de confirmación post-pago exitoso.
 
-    Cambios respecto a W14:
-        Dispara la tarea asíncrona de correo con .delay().
-        La tarea se encola en Redis y el worker la procesa
-        en segundo plano, sin bloquear esta respuesta HTTP.
+    Vacía el carrito de la sesión y muestra el número de pedido.
+    Stripe redirige aquí después de `stripe.confirmCardPayment` exitoso.
+
+    W16: esta vista NO encola la tarea de correo. La encola el webhook
+    (catalogo/webhook_views.py), que Stripe envía aunque el cliente
+    cierre el navegador y que es idempotente → un solo correo por pedido.
     """
     from django.shortcuts import get_object_or_404
     pedido = get_object_or_404(Pedido, pk=pedido_id)
 
-    # Vaciar el carrito de la sesión
+    # Vaciar el carrito al confirmar el pago
     _guardar_carrito(request, {})
-
-    # ── NUEVO W16: disparar tarea asíncrona de confirmación ───────────
-    # .delay() envía la tarea al broker Redis de forma no bloqueante.
-    # El worker la ejecutará en segundo plano.
-    try:
-        enviar_confirmacion_pedido.delay(pedido.pk)
-    except Exception as exc:
-        logger.error(
-            f'No se pudo encolar el correo del pedido {pedido.pk}: {exc}'
-        )
-    # ──────────────────────────────────────────────────────────────────
 
     messages.success(
         request,
         f'¡Pago exitoso! Tu pedido {pedido.numero_pedido} '
-        f'está confirmado. Recibirás un correo de confirmación pronto.'
+        f'está confirmado. Total: ${pedido.total_pagado}. '
+        f'Recibirás un correo de confirmación pronto.'
     )
 
     return render(request, 'catalogo/pago_exitoso.html', {
