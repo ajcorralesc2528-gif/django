@@ -44,3 +44,4 @@ stock bajo y reporte diario de ventas.
 | render.yaml: SENDGRID_API_KEY, DEFAULT_FROM_EMAIL, ADMIN_EMAIL | ✅ W17 |
 | Sender verificado en SendGrid + prueba real en Render | ⏳ W17 (en Render) |
 | Celery Beat + tareas programadas | ⏳ W18 |
+

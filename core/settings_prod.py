@@ -100,6 +100,7 @@ LOGGING = {
 # ── CORREO (W17): SendGrid vía django-anymail ─────────────────────────────
 if SENDGRID_API_KEY:
     EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend'
+
 # core/settings_prod.py — agregar al final, después de los SECURE_* headers:
 
 # ── ALMACENAMIENTO DE ARCHIVOS MEDIA (producción) ─────────────────────────
