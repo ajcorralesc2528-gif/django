@@ -58,3 +58,10 @@ else
     echo "==> [entrypoint] Worker de Celery embebido DESACTIVADO."
 fi
 
+echo "==> [entrypoint] Iniciando Gunicorn en 0.0.0.0:${PORT:-8000}..."
+exec gunicorn core.wsgi \
+    --bind 0.0.0.0:${PORT:-8000} \
+    --workers 2 \
+    --timeout 120 \
+    --log-file - \
+    --access-logfile -
